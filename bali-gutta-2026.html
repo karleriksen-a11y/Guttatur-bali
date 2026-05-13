@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BALI 2026 — Gutta på tur 🌴</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root {
+  --bg: #05070a;
+  --bg2: #080c12;
+  --bg3: #0d1219;
+  --neon: #ff4d00;
+  --neon2: #ff7a3d;
+  --teal: #00f2ff;
+  --teal2: #00bcd4;
+  --glass: rgba(255,255,255,0.04);
+  --glass-b: rgba(255,255,255,0.08);
+  --glass-h: rgba(255,255,255,0.10);
+  --text: #e8edf5;
+  --muted: #5a6a7e;
+  --muted2: #3a4a5a;
+  --border: rgba(255,255,255,0.07);
+  --border-neon: rgba(255,77,0,0.35);
+  --border-teal: rgba(0,242,255,0.3);
+  --rate: calc(670 / 1000000);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── GRAIN OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9999;
+  opacity: 0.6;
+}
+
+/* ─── SIDEBAR ─── */
+#sidebar {
+  position: fixed; top:0; left:0;
+  width: 220px; height:100vh;
+  background: rgba(5,7,10,0.92);
+  backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(0,242,255,0.1);
+  display: flex; flex-direction: column;
+  z-index: 200; overflow-y: auto;
+  scrollbar-width: none;
+}
+#sidebar::-webkit-scrollbar { display:none; }
+
+.sidebar-top {
+  padding: 28px 20px 20px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.sidebar-top::after {
+  content:'';
+  position:absolute; bottom:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, var(--teal), transparent);
+}
+.logo-trip {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px; letter-spacing: 4px;
+  color: var(--neon); line-height:1;
+}
+.logo-dates {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 1.5px; margin-top:5px;
+  text-transform: uppercase;
+}
+
+.nav-group-label {
+  font-family:'Space Mono',monospace;
+  font-size: 9px; color:var(--muted2);
+  letter-spacing:2.5px; text-transform:uppercase;
+  padding: 16px 20px 6px;
+}
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding: 10px 20px; cursor:pointer;
+  color: var(--muted); font-size:13px; font-weight:500;
+  border-left: 2px solid transparent;
+  text-decoration:none; transition: all 0.15s;
+  user-select:none;
+}
+.nav-item:hover { color:var(--text); background:var(--glass); }
+.nav-item.active { color:var(--teal); border-left-color:var(--teal); background:rgba(0,242,255,0.06); }
+.nav-icon { font-size:15px; width:18px; text-align:center; }
+
+.sidebar-footer {
+  margin-top:auto; padding:16px 20px;
+  border-top: 1px solid var(--border);
+  font-family:'Space Mono',monospace; font-size:10px;
+  color:var(--muted2);
+}
+
+/* ─── MAIN ─── */
+#main { margin-left: 220px; min-height:100vh; }
+.page { display:none; }
+.page.active { display:block; }
+
+/* ─── HERO ─── */
+.hero {
+  padding: 80px 56px 60px;
+  position:relative; overflow:hidden;
+  background: linear-gradient(135deg, #05070a 0%, #08111a 50%, #0a0a05 100%);
+  border-bottom: 1px solid var(--border);
+}
+.hero::before {
+  content:'BALI';
+  position:absolute; right:-10px; top:-20px;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:280px; letter-spacing:-5px;
+  color:rgba(0,242,255,0.03); pointer-events:none;
+  line-height:1; user-select:none;
+}
+.hero-glow {
+  position:absolute; top:60px; right:80px; width:300px; height:300px;
+  background: radial-gradient(circle, rgba(255,77,0,0.12) 0%, transparent 70%);
+  pointer-events:none;
+}
+.hero-glow2 {
+  position:absolute; bottom:-40px; left:30%; width:240px; height:240px;
+  background: radial-gradient(circle, rgba(0,242,255,0.07) 0%, transparent 70%);
+  pointer-events:none;
+}
+.hero-eyebrow {
+  font-family:'Space Mono',monospace;
+  font-size:10px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--teal);
+  margin-bottom:14px; display:flex; align-items:center; gap:8px;
+}
+.hero-eyebrow::before {
+  content:''; display:inline-block; width:20px; height:1px;
+  background:var(--teal);
+}
+.hero h1 {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:88px; line-height:0.88;
+  letter-spacing:4px; color:var(--text);
+  margin-bottom:18px;
+}
+.hero h1 .accent { color:var(--neon); }
+.hero-sub {
+  font-size:15px; color:var(--muted);
+  max-width:480px; line-height:1.75;
+  font-weight:300;
+}
+.hero-pills {
+  display:flex; gap:10px; flex-wrap:wrap;
+  margin-top:36px;
+}
+.pill {
+  display:flex; align-items:center; gap:7px;
+  padding:6px 14px;
+  background:var(--glass); border:1px solid var(--glass-b);
+  border-radius:999px; font-size:12px;
+  backdrop-filter:blur(8px); color:var(--text);
+  font-weight:500;
+}
+.pill-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.hero-stats {
+  display:flex; gap:44px; margin-top:48px; flex-wrap:wrap;
+}
+.stat-num {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:48px; color:var(--neon); line-height:1;
+}
+.stat-label {
+  font-family:'Space Mono',monospace;
+  font-size:10px; color:var(--muted);
+  text-transform:uppercase; letter-spacing:1.5px; margin-top:2px;
+}
+
+/* ─── GLASS CARD ─── */
+.glass-card {
+  background:var(--glass);
+  border:1px solid var(--glass-b);
+  backdrop-filter:blur(16px);
+  border-radius:16px; padding:24px;
+  transition: border-color 0.2s, transform 0.2s;
+  position:relative; overflow:hidden;
+}
+.glass-card::before {
+  content:''; position:absolute;
+  inset:0; border-radius:16px;
+  background:linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+  pointer-events:none;
+}
+.glass-card:hover { border-color:var(--border-teal); transform:translateY(-2px); }
+
+/* ─── CONTENT ─── */
+.content { padding: 48px 56px; }
+.section-label {
+  font-family:'Space Mono',monospace;
+  font-size:10px; letter-spacing:2.5px;
+  text-transform:uppercase; color:var(--muted);
+  margin-bottom:14px; display:flex; align-items:center; gap:10px;
+}
+.section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+hr.divider { border:none; border-top:1px solid var(--border); margin:32px 0; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+.mt { margin-top:32px; }
+.mt-sm { margin-top:16px; }
+.mb { margin-bottom:24px; }
+
+/* ─── COUNTDOWN ─── */
+.countdown-wrap {
+  margin-top:32px;
+  background:rgba(255,77,0,0.04);
+  border:1px solid rgba(255,77,0,0.2);
+  border-radius:18px; padding:28px 32px;
+  display:flex; align-items:center; gap:32px;
+  position:relative; overflow:hidden;
+}
+.countdown-wrap::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(255,77,0,0.06) 0%, transparent 60%);
+  pointer-events:none;
+}
+.countdown-label {
+  font-family:'Space Mono',monospace;
+  font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--neon);
+  margin-bottom:12px;
+}
+.countdown-units {
+  display:flex; gap:20px;
+}
+.cd-unit { text-align:center; }
+.cd-num {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:56px; color:var(--text); line-height:1;
+  text-shadow: 0 0 30px rgba(255,77,0,0.5);
+}
+.cd-label {
+  font-family:'Space Mono',monospace;
+  font-size:9px; color:var(--muted);
+  text-transform:uppercase; letter-spacing:2px;
+}
+.cd-sep {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:48px; color:var(--neon);
+  opacity:0.5; line-height:1; align-self:flex-start; margin-top:4px;
+}
+#countdown-fired {
+  display:none;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:42px; color:var(--neon);
+  letter-spacing:2px; line-height:1.15;
+  text-shadow: 0 0 40px rgba(255,77,0,0.8), 0 0 80px rgba(255,77,0,0.4);
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+@keyframes pulse-glow {
+  0%,100% { text-shadow: 0 0 40px rgba(255,77,0,0.8), 0 0 80px rgba(255,77,0,0.4); }
+  50% { text-shadow: 0 0 60px rgba(255,77,0,1), 0 0 120px rgba(255,77,0,0.6); }
+}
+
+/* ─── WEATHER CARD ─── */
+.weather-card {
+  background:rgba(0,242,255,0.03);
+  border:1px solid rgba(0,242,255,0.15);
+  border-radius:18px; padding:28px 28px;
+  display:flex; gap:24px; align-items:center;
+  position:relative; overflow:hidden;
+}
+.weather-card::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(0,242,255,0.05) 0%, transparent 60%);
+  pointer-events:none;
+}
+.weather-icon-wrap {
+  width:80px; height:80px; flex-shrink:0;
+  border-radius:50%;
+  background:rgba(0,242,255,0.08);
+  border:2px solid rgba(0,242,255,0.2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:36px;
+  box-shadow:0 0 30px rgba(0,242,255,0.15);
+  position:relative;
+}
+.live-badge {
+  position:absolute; top:-4px; right:-4px;
+  width:16px; height:16px; border-radius:50%;
+  background:var(--neon);
+  box-shadow:0 0 12px var(--neon);
+  animation: live-pulse 2s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%,100% { transform:scale(1); opacity:1; }
+  50% { transform:scale(1.3); opacity:0.7; }
+}
+.weather-info { flex:1; }
+.weather-location {
+  font-family:'Space Mono',monospace;
+  font-size:10px; color:var(--teal); letter-spacing:2px;
+  text-transform:uppercase; margin-bottom:6px;
+}
+.weather-temp {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:52px; color:var(--text); line-height:1;
+}
+.weather-temp span { color:var(--teal); font-size:32px; }
+.weather-desc {
+  font-size:13px; color:var(--muted);
+  margin-top:4px; font-weight:300;
+}
+.weather-meta {
+  display:flex; gap:16px; margin-top:10px;
+  flex-wrap:wrap;
+}
+.weather-meta-item {
+  font-family:'Space Mono',monospace;
+  font-size:10px; color:var(--muted);
+  display:flex; align-items:center; gap:5px;
+}
+.weather-meta-item strong { color:var(--teal2); }
+.accuweather-btn {
+  display:inline-flex; align-items:center; gap:7px;
+  padding:10px 18px; margin-top:14px;
+  background:rgba(0,242,255,0.08);
+  border:1px solid rgba(0,242,255,0.25);
+  border-radius:999px; font-size:12px; font-weight:600;
+  color:var(--teal); cursor:pointer; text-decoration:none;
+  font-family:'Space Mono',monospace; letter-spacing:0.5px;
+  transition: all 0.15s;
+}
+.accuweather-btn:hover { background:rgba(0,242,255,0.16); color:var(--text); }
+
+/* ─── MAP ─── */
+.map-container {
+  border-radius:16px; overflow:hidden;
+  border:1px solid var(--glass-b);
+  height:420px;
+  position:relative;
+}
+.map-container .leaflet-container {
+  background:#0d1219 !important;
+}
+
+/* ─── CHECK CARDS ─── */
+.check-card {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:14px; padding:22px 24px;
+}
+.check-card-title {
+  font-size:12px; font-weight:600;
+  text-transform:uppercase; letter-spacing:1.5px;
+  font-family:'Space Mono',monospace;
+  margin-bottom:16px;
+  display:flex; align-items:center; gap:8px;
+  color:var(--text);
+}
+.check-list { list-style:none; }
+.check-list li {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:7px 0; font-size:13px; color:var(--muted);
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  line-height:1.5; font-weight:300;
+}
+.check-list li:last-child { border-bottom:none; }
+.check-list li strong { color:var(--text); font-weight:500; }
+.dot-r { width:7px; height:7px; border-radius:50%; background:#e84a4a; flex-shrink:0; margin-top:5px; }
+.dot-g { width:7px; height:7px; border-radius:50%; background:#4caf50; flex-shrink:0; margin-top:5px; }
+.dot-y { width:7px; height:7px; border-radius:50%; background:#ff9800; flex-shrink:0; margin-top:5px; }
+
+/* ─── ACTIVITY GRID ─── */
+.activity-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:16px; margin-bottom:28px;
+}
+.act-card {
+  background:var(--glass);
+  border:1px solid var(--glass-b);
+  border-radius:14px; padding:20px;
+  transition: border-color 0.2s, transform 0.18s;
+  position:relative; overflow:hidden;
+}
+.act-card::after {
+  content:''; position:absolute;
+  bottom:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--neon), var(--teal));
+  transform:scaleX(0); transform-origin:left;
+  transition:transform 0.25s;
+}
+.act-card:hover { border-color:var(--border-neon); transform:translateY(-3px); }
+.act-card:hover::after { transform:scaleX(1); }
+.act-icon { font-size:28px; margin-bottom:12px; display:block; }
+.act-title { font-size:14px; font-weight:600; color:var(--text); margin-bottom:6px; }
+.act-where {
+  font-size:10px; color:var(--teal);
+  font-family:'Space Mono',monospace;
+  text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;
+}
+.act-desc { font-size:12px; color:var(--muted); line-height:1.6; font-weight:300; }
+.act-price {
+  margin-top:12px; font-family:'Space Mono',monospace;
+  font-size:11px; color:var(--neon2);
+}
+.act-nok { color:var(--muted); font-size:10px; }
+
+/* ─── CURRENCY ─── */
+.currency-card {
+  background:rgba(255,77,0,0.04);
+  border:1px solid rgba(255,77,0,0.2);
+  border-radius:18px; padding:28px 32px;
+}
+.currency-card h3 {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:24px; letter-spacing:2px;
+  color:var(--neon); margin-bottom:20px;
+}
+.currency-input-row {
+  display:flex; gap:12px; align-items:stretch; margin-bottom:18px;
+}
+.currency-input {
+  flex:1; background:rgba(0,0,0,0.4);
+  border:1px solid rgba(255,77,0,0.3);
+  border-radius:10px; padding:12px 16px;
+  font-family:'Space Mono',monospace; font-size:14px;
+  color:var(--text); outline:none;
+  transition:border-color 0.15s;
+}
+.currency-input:focus { border-color:var(--neon); }
+.currency-btn {
+  padding:12px 20px;
+  background:var(--neon); border:none;
+  border-radius:10px; font-family:'Bebas Neue',sans-serif;
+  font-size:16px; letter-spacing:1px;
+  color:var(--bg); cursor:pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.currency-btn:hover { background:var(--neon2); transform:scale(1.02); }
+.currency-result {
+  background:rgba(0,0,0,0.3); border-radius:12px; padding:20px 24px;
+  display:flex; align-items:baseline; gap:8px;
+}
+.nok-big {
+  font-family:'Bebas Neue',sans-serif; font-size:52px;
+  color:var(--text); line-height:1;
+}
+.nok-label {
+  font-family:'Space Mono',monospace; font-size:13px;
+  color:var(--muted);
+}
+.quickset-row {
+  display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;
+}
+.quickset-btn {
+  padding:6px 12px; background:var(--glass);
+  border:1px solid var(--glass-b); border-radius:999px;
+  font-family:'Space Mono',monospace; font-size:11px;
+  color:var(--muted); cursor:pointer; transition:all 0.15s;
+}
+.quickset-btn:hover { border-color:var(--border-neon); color:var(--neon); }
+
+/* ─── BOSS SPIN ─── */
+.boss-card {
+  background:rgba(0,242,255,0.03);
+  border:1px solid rgba(0,242,255,0.15);
+  border-radius:18px; padding:32px;
+  text-align:center;
+}
+.boss-card h3 {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px; letter-spacing:3px; color:var(--teal);
+  margin-bottom:24px;
+}
+#sjef-name {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:72px; color:var(--text); line-height:1;
+  letter-spacing:4px; min-height:80px;
+  display:flex; align-items:center; justify-content:center;
+  text-shadow:0 0 40px rgba(0,242,255,0.4);
+  transition:color 0.2s;
+}
+#sjef-name.spinning { animation: spin-name 0.5s ease-out; }
+@keyframes spin-name {
+  0% { transform:scale(1.3) rotateX(20deg); opacity:0; }
+  100% { transform:scale(1) rotateX(0deg); opacity:1; }
+}
+#sjef-sub {
+  font-family:'Space Mono',monospace; font-size:12px;
+  color:var(--muted); margin-top:8px; min-height:20px;
+}
+.spin-btn {
+  margin-top:24px; padding:14px 32px;
+  background:linear-gradient(135deg, var(--teal) 0%, var(--teal2) 100%);
+  border:none; border-radius:999px;
+  font-family:'Bebas Neue',sans-serif; font-size:18px;
+  letter-spacing:2px; color:var(--bg);
+  cursor:pointer; transition:all 0.15s;
+  box-shadow:0 0 30px rgba(0,242,255,0.25);
+}
+.spin-btn:hover { transform:scale(1.05); box-shadow:0 0 50px rgba(0,242,255,0.45); }
+
+/* ─── BINTANG ─── */
+.bintang-grid {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:12px; margin-top:16px;
+}
+.bintang-person {
+  background:var(--glass); border:1px solid var(--glass-b);
+  border-radius:14px; padding:16px;
+  text-align:center; transition:border-color 0.2s;
+}
+.bintang-person:hover { border-color:var(--border-teal); }
+.bintang-name {
+  font-size:12px; font-weight:600;
+  color:var(--text); text-transform:uppercase;
+  letter-spacing:1px; font-family:'Space Mono',monospace;
+  margin-bottom:8px;
+}
+.bintang-emoji { font-size:32px; margin-bottom:6px; }
+.bintang-count {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:44px; color:var(--neon); line-height:1;
+}
+.bintang-controls {
+  display:flex; gap:8px; justify-content:center; margin-top:10px;
+}
+.bintang-btn {
+  width:36px; height:36px; border-radius:50%;
+  border:1px solid var(--glass-b); background:var(--glass);
+  color:var(--text); font-size:18px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.15s;
+}
+.bintang-btn.plus:hover { border-color:var(--border-teal); color:var(--teal); }
+.bintang-btn.minus:hover { border-color:rgba(232,74,74,0.4); color:#e84a4a; }
+
+/* ─── TIMELINE ─── */
+.tl-group { margin-bottom:40px; }
+.tl-group-title {
+  font-family:'Bebas Neue',sans-serif; font-size:20px;
+  letter-spacing:3px; color:var(--neon); margin-bottom:16px;
+  display:flex; align-items:center; gap:12px;
+}
+.tl-group-title::after { content:''; flex:1; height:1px; background:linear-gradient(90deg, rgba(255,77,0,0.3), transparent); }
+.tl-item {
+  display:grid; grid-template-columns:100px 1fr;
+  gap:20px; padding:16px 0;
+  border-bottom:1px solid var(--border);
+}
+.tl-item:last-child { border-bottom:none; }
+.tl-date { font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); padding-top:2px; }
+.tl-day-num { font-family:'Bebas Neue',sans-serif; font-size:30px; color:var(--teal); line-height:1; }
+.tl-title { font-size:15px; font-weight:600; color:var(--text); margin-bottom:6px; }
+.tl-desc { font-size:13px; color:var(--muted); line-height:1.7; font-weight:300; }
+.tl-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.tag { font-size:11px; padding:3px 10px; border-radius:999px; font-family:'Space Mono',monospace; letter-spacing:0.3px; }
+.tag-orange { background:rgba(255,77,0,0.12); color:var(--neon2); border:1px solid rgba(255,77,0,0.25); }
+.tag-teal { background:rgba(0,242,255,0.08); color:var(--teal); border:1px solid rgba(0,242,255,0.2); }
+.tag-sand { background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--glass-b); }
+
+/* ─── TRANSPORT CARD ─── */
+.transport-card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:14px; padding:24px; margin-bottom:16px;
+}
+.transport-card h3 {
+  font-family:'Bebas Neue',sans-serif; font-size:22px;
+  letter-spacing:2px; color:var(--text); margin-bottom:14px;
+  display:flex; align-items:center; gap:10px;
+}
+.transport-card h3 span { color:var(--neon); font-size:26px; }
+
+/* ─── SPOTS ─── */
+.spot-item {
+  display:grid; grid-template-columns:160px 1fr auto;
+  gap:16px; align-items:center; padding:12px 0;
+  border-bottom:1px solid var(--border);
+}
+.spot-item:last-child { border-bottom:none; }
+.spot-name { font-size:13px; font-weight:600; color:var(--text); }
+.spot-area {
+  font-size:10px; color:var(--muted); text-transform:uppercase;
+  letter-spacing:1px; font-family:'Space Mono',monospace; margin-top:2px;
+}
+.spot-desc { font-size:12px; color:var(--muted); font-weight:300; }
+.spot-tip { font-size:11px; color:var(--neon2); font-family:'Space Mono',monospace; text-align:right; }
+
+/* ─── WARNING BOX ─── */
+.warning-box {
+  background:rgba(255,152,0,0.05);
+  border:1px solid rgba(255,152,0,0.25);
+  border-radius:12px; padding:16px 20px;
+  font-size:13px; color:var(--muted); line-height:1.7;
+  margin-bottom:20px;
+}
+.warning-box strong { color:var(--text); font-weight:600; }
+
+/* ─── MOBILE BURGER ─── */
+.burger { display:none; }
+
+/* ─── ACCESSIBILITY ─── */
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width:900px) {
+  #sidebar {
+    transform:translateX(-100%);
+    transition:transform 0.3s;
+  }
+  #sidebar.open { transform:translateX(0); }
+  #main { margin-left:0; }
+  .burger {
+    display:flex; position:fixed; top:16px; left:16px; z-index:300;
+    width:44px; height:44px; border-radius:10px;
+    background:rgba(5,7,10,0.9); border:1px solid var(--border);
+    align-items:center; justify-content:center; cursor:pointer;
+    flex-direction:column; gap:5px;
+  }
+  .burger span { width:20px; height:2px; background:var(--text); border-radius:1px; }
+  .hero { padding:60px 24px 40px; }
+  .hero h1 { font-size:56px; }
+  .content { padding:32px 24px; }
+  .two-col, .three-col, .activity-grid { grid-template-columns:1fr; }
+  .bintang-grid { grid-template-columns:repeat(2,1fr); }
+  .countdown-units { gap:12px; }
+  .cd-num { font-size:40px; }
+}
+
+/* Leaflet popup dark style */
+.leaflet-popup-content-wrapper {
+  background:#0d1219 !important;
+  border:1px solid rgba(0,242,255,0.25) !important;
+  color:var(--text) !important;
+  border-radius:12px !important;
+  box-shadow:0 8px 32px rgba(0,0,0,0.6) !important;
+}
+.leaflet-popup-tip { background:#0d1219 !important; }
+.leaflet-popup-content { font-family:'Outfit',sans-serif !important; margin:12px 16px !important; }
+.popup-title { font-weight:700; font-size:14px; color:var(--text); margin-bottom:4px; }
+.popup-time { font-family:'Space Mono',monospace; font-size:11px; color:var(--teal); margin-bottom:4px; }
+.popup-desc { font-size:12px; color:#6a7a8e; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<!-- ─── MOBILE BURGER ─── -->
+<button class="burger" onclick="toggleSidebar()" aria-label="Åpne meny" aria-expanded="false" id="burger-btn">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- ─── SIDEBAR ─── -->
+<nav id="sidebar" role="navigation" aria-label="Sidepanel">
+  <div class="sidebar-top">
+    <div class="logo-trip">BALI 2026</div>
+    <div class="logo-dates">25 MAI – 7 JUNI</div>
+  </div>
+
+  <div class="nav-group-label">Navigasjon</div>
+  <a class="nav-item active" href="#" onclick="show('hjem',this);return false;" tabindex="0" aria-current="page">
+    <span class="nav-icon" aria-hidden="true">🏠</span> Hjem
+  </a>
+  <a class="nav-item" href="#" onclick="show('plan',this);return false;">
+    <span class="nav-icon" aria-hidden="true">📅</span> Reiseplan
+  </a>
+  <a class="nav-item" href="#" onclick="show('kart',this);return false;">
+    <span class="nav-icon" aria-hidden="true">🗺️</span> Interaktive Kart
+  </a>
+  <a class="nav-item" href="#" onclick="show('aktiviteter',this);return false;">
+    <span class="nav-icon" aria-hidden="true">🏄</span> Aktiviteter
+  </a>
+  <a class="nav-item" href="#" onclick="show('beachclubs',this);return false;">
+    <span class="nav-icon" aria-hidden="true">🌴</span> Beach Clubs
+  </a>
+  <a class="nav-item" href="#" onclick="show('transport',this);return false;">
+    <span class="nav-icon" aria-hidden="true">🚤</span> Transport
+  </a>
+
+  <div class="nav-group-label">Verktøy</div>
+  <a class="nav-item" href="#" onclick="show('tools',this);return false;">
+    <span class="nav-icon" aria-hidden="true">⚡</span> Tools
+  </a>
+  <a class="nav-item" href="#" onclick="show('helse',this);return false;">
+    <span class="nav-icon" aria-hidden="true">🏥</span> Helse & Tips
+  </a>
+
+  <div class="sidebar-footer" aria-label="Reiseinformasjon">
+    <div>Stian · Karl · Christoffer · Benjamin</div>
+    <div style="margin-top:4px;color:var(--muted2)">Kurs: 1 000 000 IDR = 670 NOK</div>
+  </div>
+</nav>
+
+<!-- ─── MAIN ─── -->
+<main id="main">
+
+<!-- ══════════════════ HJEM ══════════════════ -->
+<div id="hjem" class="page active">
+  <div class="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="hero-glow2" aria-hidden="true"></div>
+    <div class="hero-eyebrow">Gutta på tur · Bali 2026</div>
+    <h1>BALI<br><span class="accent">2026</span></h1>
+    <p class="hero-sub">Stian, Karl, Christoffer og Benjamin. 14 dager. Canggu, Gili Islands, Uluwatu. Ingen unnskyldninger.</p>
+    <div class="hero-pills">
+      <div class="pill"><div class="pill-dot" style="background:var(--neon)"></div>Canggu · 5 netter</div>
+      <div class="pill"><div class="pill-dot" style="background:var(--teal)"></div>Gili Islands · 3–4 netter</div>
+      <div class="pill"><div class="pill-dot" style="background:#ffab00"></div>Uluwatu · 3 netter</div>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">14</div><div class="stat-label">Dager</div></div>
+      <div><div class="stat-num">3</div><div class="stat-label">Destinasjoner</div></div>
+      <div><div class="stat-num">30+</div><div class="stat-label">Aktiviteter</div></div>
+      <div><div class="stat-num">0</div><div class="stat-label">Unnskyldninger</div></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- COUNTDOWN -->
+    <div class="section-label">Nedtelling til avreise</div>
+    <div class="countdown-wrap" role="timer" aria-live="polite" aria-label="Nedtelling til avreise">
+      <div id="countdown-live">
+        <div class="countdown-label">✈️ Avreise — 25. mai 2026 kl. 09:00</div>
+        <div class="countdown-units">
+          <div class="cd-unit"><div class="cd-num" id="cd-d">--</div><div class="cd-label">Dager</div></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><div class="cd-num" id="cd-h">--</div><div class="cd-label">Timer</div></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><div class="cd-num" id="cd-m">--</div><div class="cd-label">Min</div></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><div class="cd-num" id="cd-s">--</div><div class="cd-label">Sek</div></div>
+        </div>
+      </div>
+      <div id="countdown-fired">BALI NÅÅÅ!!!<br>KOS DEG MR NORDSTRAND 🌴🔥</div>
+    </div>
+
+    <!-- WEATHER -->
+    <div class="section-label mt">🌤️ Været på Bali</div>
+    <div class="weather-card" role="region" aria-label="Værinformasjon Bali">
+      <div class="weather-icon-wrap" aria-hidden="true">
+        ☀️
+        <div class="live-badge" title="Live oppdatert"></div>
+      </div>
+      <div class="weather-info">
+        <div class="weather-location">📍 Canggu, Bali, Indonesia</div>
+        <div class="weather-temp">28–30<span>°C</span></div>
+        <div class="weather-desc">Sol og lettskyet · Mai-klima · Lav fuktighet · Perfekt 🤙</div>
+        <div class="weather-meta">
+          <div class="weather-meta-item">💧 Fuktighet: <strong>60–68%</strong></div>
+          <div class="weather-meta-item">🌊 Havtemp: <strong>27°C</strong></div>
+          <div class="weather-meta-item">🌬️ Vind: <strong>10–15 km/t</strong></div>
+          <div class="weather-meta-item">🌅 Solnedgang: <strong>18:23 WITA</strong></div>
+        </div>
+        <a href="https://www.accuweather.com/en/id/canggu/1072067/weather-forecast/1072067" target="_blank" rel="noopener noreferrer" class="accuweather-btn" aria-label="Åpne AccuWeather for Canggu i ny fane">
+          🌐 AccuWeather — Canggu Live
+        </a>
+      </div>
+    </div>
+
+    <!-- QUICK CHECK -->
+    <div class="three-col mt">
+      <div class="check-card">
+        <div class="check-card-title"><span aria-hidden="true">⚡</span> Gjør nå</div>
+        <ul class="check-list">
+          <li><div class="dot-r" aria-label="Viktig"></div><span><strong>Søk eVOA-visum</strong> på molina.imigrasi.go.id — 5 virkedager</span></li>
+          <li><div class="dot-r" aria-label="Viktig"></div><span>Pass gyldig til <strong>desember 2026</strong></span></li>
+          <li><div class="dot-r" aria-label="Viktig"></div><span>Bestill <strong>Airalo eSIM</strong> Asean-pakke</span></li>
+          <li><div class="dot-y" aria-label="Anbefalt"></div><span>Book <strong>Gili-båt</strong> via Eka Jaya</span></li>
+          <li><div class="dot-y" aria-label="Anbefalt"></div><span>Sjekk forsikring dekker <strong>scooter + vannsport</strong></span></li>
+        </ul>
+      </div>
+      <div class="check-card">
+        <div class="check-card-title"><span aria-hidden="true">🌊</span> Canggu-topp</div>
+        <ul class="check-list">
+          <li><div class="dot-g" aria-label="Anbefalt"></div><span>Surfing på <strong>Batu Bolong</strong></span></li>
+          <li><div class="dot-g"></div><span>Muay Thai på <strong>Reload Sanctuary</strong></span></li>
+          <li><div class="dot-g"></div><span><strong>G Swing</strong> — gynge over havet</span></li>
+          <li><div class="dot-g"></div><span>Savaya Beach Club — Uluwatu</span></li>
+        </ul>
+      </div>
+      <div class="check-card">
+        <div class="check-card-title"><span aria-hidden="true">🐠</span> Must do</div>
+        <ul class="check-list">
+          <li><div class="dot-g"></div><span>Snorkling med <strong>havskildpadder</strong> Gili T</span></li>
+          <li><div class="dot-g"></div><span><strong>Sunrise Jeep</strong> Gunung Batur kl. 02:00</span></li>
+          <li><div class="dot-g"></div><span>Privat båt til <strong>Manta Point</strong>, Nusa Penida</span></li>
+          <li><div class="dot-g"></div><span><strong>Kecak-dans</strong> Uluwatu kl. 18:00</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ REISEPLAN ══════════════════ -->
+<div id="plan" class="page">
+  <div class="hero" style="padding:50px 56px 40px">
+    <div class="hero-eyebrow">Dag for dag</div>
+    <h1 style="font-size:64px">REISE<span class="accent">PLAN</span></h1>
+  </div>
+  <div class="content">
+    <div class="tl-group">
+      <div class="tl-group-title" role="heading" aria-level="2">🌊 CANGGU — 26. mai – 31. mai 2026</div>
+      <div class="tl-item">
+        <div><div class="tl-day-num">D1</div><div class="tl-date">26 MAI<br>TIR</div></div>
+        <div>
+          <div class="tl-title">Ankomst Bali — sjekk inn og pust ut</div>
+          <div class="tl-desc">Landet etter lang reise. Ta Grab til Canggu (350–500k IDR · <span class="act-nok">~235–335 NOK</span>, ~45 min). Hent scooter og finn hotellet. Enkel middag langs Batu Bolong.</div>
+          <div class="tl-tags"><span class="tag tag-sand">✈️ Ankomst</span><span class="tag tag-teal">🛵 Lei scooter</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div><div class="tl-day-num">D2</div><div class="tl-date">27 MAI<br>ONS</div></div>
+        <div>
+          <div class="tl-title">Bli kjent med Canggu + Tanah Lot</div>
+          <div class="tl-desc">Frokost på Neighbourhood Coffee. Surfetime på Batu Bolong (400k IDR · <span class="act-nok">~268 NOK</span>). Ettermiddag: Tanah Lot — sjøtempel i solnedgang (75k IDR · <span class="act-nok">~50 NOK</span>). Kveld langs Echo Beach.</div>
+          <div class="tl-tags"><span class="tag tag-orange">🏄 Surfing</span><span class="tag tag-teal">🛕 Tanah Lot</span><span class="tag tag-sand">🌅 Solnedgang</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div><div class="tl-day-num">D3</div><div class="tl-date">28 MAI<br>TOR</div></div>
+        <div>
+          <div class="tl-title">Reload Sanctuary + G Swing</div>
+          <div class="tl-desc">Morgen: Reload Sanctuary — Muay Thai-klasse. Ettermiddag: G Swing Bali ved Batu Mejan — katapult-gynge over havet. Kveld: The Lawn eller Old Man's.</div>
+          <div class="tl-tags"><span class="tag tag-orange">🥊 Muay Thai</span><span class="tag tag-orange">🎢 G Swing</span><span class="tag tag-teal">🍸 Beach Club</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div><div class="tl-day-num">D4</div><div class="tl-date">29 MAI<br>FRE</div></div>
+        <div>
+          <div class="tl-title">Dagstur Ubud — ATV + tempel</div>
+          <div class="tl-desc">Start kl. 07:00. ATV-ride gjennom jungel og rismarker (350–500k IDR/t · <span class="act-nok">~235–335 NOK</span>). Tirta Empul hellig bad — ta sarong. Tegallalang rismarker.</div>
+          <div class="tl-tags"><span class="tag tag-orange">🏎️ ATV</span><span class="tag tag-teal">🛕 Tirta Empul</span><span class="tag tag-sand">🌾 Ubud</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div><div class="tl-day-num">D5</div><div class="tl-date">30 MAI<br>LØR</div></div>
+        <div>
+          <div class="tl-title">Finns Beach Club + siste Canggu-kveld</div>
+          <div class="tl-desc">Morgensurf på Echo Beach. Ettermiddag: Finns Beach Club (basseng, DJ, verdt pengene). Kveld langs Jl. Batu Bolong.</div>
+          <div class="tl-tags"><span class="tag tag-orange">🏄 Surf</span><span class="tag tag-teal">🌴 Finns BC</span><span class="tag tag-sand">🌙 Kveldsliv</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div><div class="tl-day-num">D6</div><div class="tl-date">31 MAI<br>SØN</div></div>
+        <div>
+          <div class="tl-title">Avreise til Gili Trawangan</div>
+          <div class="tl-desc">Tidlig opp — pakk og returner scooter. Kjør til Padang Bai (~2t). Speedbåt Eka Jaya til Gili T (avgang ~09:00, ~2t). Lei sykler og utforsk øya. Solnedgang ved West Sunset Point.</div>
+          <div class="tl-tags"><span class="tag tag-sand">🚤 Padang Bai → Gili T</span><span class="tag tag-teal">🌴 Ankomst Gili</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-group">
+      <div class="tl-group-title" role="heading" aria-level="2">🐠 GILI TRAWANGAN — 1. juni – 4. juni 2026</div>
+      <div class="tl-item">
+        <div><div class="tl-day-num">D7</div><div class="tl-date">1 JUNI<br>MAN</div></div>
+        <div>
+          <div class="tl-title">Snorkling — havskildpadder</div>
+          <div class="tl-desc">Kl. 07:00: Bask Nest undervannsskulpturer. Svøm etter havskildpadder rett fra østkysten. Ettermiddag: DPM Diving — 2 fun dives (book via WhatsApp). Kveld: strandbar og live musikk.</div>
+          <div class="tl-tags"><span class="tag tag-teal">🤿 Dykking</span><span class="tag tag-orange">🐢 Skildpadder</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div><div class="tl-day-num">D8</div><div class="tl-date">2 JUNI<br>TIR</div></div>
+        <div>
+          <div class="tl-title">Dagstur Gili Meno</div>
+          <div class="tl-desc">Kort båt til Gili Meno (~10 min). Roligste av øyene — hvit sand, ingen folkemengder, turkist hav. Snorkling, hengekøye, ingenting. Tilbake til Gili T om kvelden.</div>
+          <div class="tl-tags"><span class="tag tag-teal">🏝️ Gili Meno</span><span class="tag tag-sand">😌 Avkobling</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div><div class="tl-day-num">D9</div><div class="tl-date">3 JUNI<br>ONS</div></div>
+        <div>
+          <div class="tl-title">Sykkel rundt øya + avreise Uluwatu</div>
+          <div class="tl-desc">Morgen: Sykkel rundt hele Gili T (~1t). Middag: speedbåt sørover til Bali (Sanur eller Padang Bai). Scooter/Grab til Uluwatu (~1,5–2t). Sjekk inn.</div>
+          <div class="tl-tags"><span class="tag tag-orange">🚲 Sykling</span><span class="tag tag-sand">🚤 Til Uluwatu</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-group">
+      <div class="tl-group-title" role="heading" aria-level="2">🌅 ULUWATU — 4. juni – 7. juni 2026</div>
+      <div class="tl-item">
+        <div><div class="tl-day-num">D10</div><div class="tl-date">4 JUNI<br>TOR</div></div>
+        <div>
+          <div class="tl-title">Uluwatu-tempel + Kecak-dans</div>
+          <div class="tl-desc">Uluwatu-tempelet på klippen (50k IDR · <span class="act-nok">~34 NOK</span>). Kecak-dans ved solnedgang kl. 18:00 (150k IDR · <span class="act-nok">~101 NOK</span>). Etterpå: Single Fin for solnedgangs-burger.</div>
+          <div class="tl-tags"><span class="tag tag-teal">🛕 Tempel</span><span class="tag tag-orange">💃 Kecak</span><span class="tag tag-sand">🌅 Single Fin</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div><div class="tl-day-num">D11</div><div class="tl-date">5 JUNI<br>FRE</div></div>
+        <div>
+          <div class="tl-title">Savaya Beach Club</div>
+          <div class="tl-desc">Balis mest spektakulære beach club. Bassenger i amfiteater-stil på klippekanten over havet. Bestill bord på forhånd. Kjøp inn tidlig — det fylles opp fort.</div>
+          <div class="tl-tags"><span class="tag tag-teal">🌊 Savaya</span><span class="tag tag-orange">🎉 VIP-dag</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div><div class="tl-day-num">D12</div><div class="tl-date">6 JUNI<br>LØR</div></div>
+        <div>
+          <div class="tl-title">Jet Ski + Potato Head</div>
+          <div class="tl-desc">Morgen: Jet Ski utenfor Seminyak (750k IDR/t · <span class="act-nok">~503 NOK</span>). Ettermiddag: Potato Head Beach Club i Seminyak — ikonisk basseng med havutsikt.</div>
+          <div class="tl-tags"><span class="tag tag-orange">🏍️ Jet Ski</span><span class="tag tag-teal">🥂 Potato Head</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div><div class="tl-day-num">D13</div><div class="tl-date">7 JUNI<br>SØN</div></div>
+        <div>
+          <div class="tl-title">Avreise hjem</div>
+          <div class="tl-desc">Siste frokost på Bali. Transfer til Ngurah Rai-flyplassen (DPS). Pack light, minnene er tunge nok.</div>
+          <div class="tl-tags"><span class="tag tag-sand">✈️ Hjem</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ KART ══════════════════ -->
+<div id="kart" class="page">
+  <div class="hero" style="padding:50px 56px 40px">
+    <div class="hero-eyebrow">Leaflet.js interaktive kart</div>
+    <h1 style="font-size:64px">INTER<span class="accent">AKTIVE</span><br>KART</h1>
+  </div>
+  <div class="content">
+
+    <div class="section-label">Hotspot-kart — Beach Clubs & Spots</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Klikk på markørene for åpningstider og tips. Zoom og dra fritt.</p>
+    <div class="map-container" id="map-hotspots" role="application" aria-label="Interaktivt kart over Bali hotspots"></div>
+
+    <div class="section-label mt">Transportrute — Padang Bai → Gili-øyene</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Stiplet rute viser speedbåt-turen fra Bali til Gili Trawangan.</p>
+    <div class="map-container" id="map-transport" role="application" aria-label="Interaktivt kart over transportrute til Gili-øyene"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ AKTIVITETER ══════════════════ -->
+<div id="aktiviteter" class="page">
+  <div class="hero" style="padding:50px 56px 40px">
+    <div class="hero-eyebrow">Hva skal vi gjøre</div>
+    <h1 style="font-size:64px">AKTIVI<span class="accent">TETER</span></h1>
+  </div>
+  <div class="content">
+    <div class="section-label">Vann & Eventyr</div>
+    <div class="activity-grid">
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🏄</span>
+        <div class="act-title">Surfing — Batu Bolong</div>
+        <div class="act-where">Canggu</div>
+        <div class="act-desc">Perfekte bølger for alle nivåer. Surf Coco gir supert utstyr og instruktør.</div>
+        <div class="act-price">400k IDR/t <span class="act-nok">(≈ 268 NOK)</span></div>
+      </div>
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🤿</span>
+        <div class="act-title">Dykking — DPM Diving</div>
+        <div class="act-where">Gili Trawangan</div>
+        <div class="act-desc">2 fun dives med instruktør. Havskildpadder garantert. Book via WhatsApp.</div>
+        <div class="act-price">900k IDR <span class="act-nok">(≈ 603 NOK)</span></div>
+      </div>
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🏍️</span>
+        <div class="act-title">Jet Ski</div>
+        <div class="act-where">Seminyak</div>
+        <div class="act-desc">Rip langs kysten utenfor Seminyak. 30 eller 60 min. Gøy som bare det.</div>
+        <div class="act-price">750k IDR/t <span class="act-nok">(≈ 503 NOK)</span></div>
+      </div>
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🏎️</span>
+        <div class="act-title">ATV — Ubud-jungelen</div>
+        <div class="act-where">Ubud</div>
+        <div class="act-desc">Kjør gjennom rismarker, jungel og elver. Våt men verdt det. Book tidlig.</div>
+        <div class="act-price">350–500k IDR/t <span class="act-nok">(≈ 235–335 NOK)</span></div>
+      </div>
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🎢</span>
+        <div class="act-title">G Swing</div>
+        <div class="act-where">Batu Mejan, Canggu</div>
+        <div class="act-desc">Katapult-gynge over havet med spektakulær utsikt. Adrenalin-garantert 5★.</div>
+        <div class="act-price">350k IDR <span class="act-nok">(≈ 235 NOK)</span></div>
+      </div>
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🥊</span>
+        <div class="act-title">Muay Thai — Reload</div>
+        <div class="act-where">Canggu</div>
+        <div class="act-desc">Reload Sanctuary — verdenselite treningsfasilitet. Dagspass for alle nivåer.</div>
+        <div class="act-price">200k IDR <span class="act-nok">(≈ 134 NOK)</span></div>
+      </div>
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🚤</span>
+        <div class="act-title">Privat båt — Manta Point</div>
+        <div class="act-where">Nusa Penida</div>
+        <div class="act-desc">Svøm med kjempemanter. Bestill privat speedbåt — splitt på gutta for god deal.</div>
+        <div class="act-price">1,2 mill IDR total <span class="act-nok">(≈ 804 NOK)</span></div>
+      </div>
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🌋</span>
+        <div class="act-title">Sunrise Jeep — Gunung Batur</div>
+        <div class="act-where">Ubud</div>
+        <div class="act-desc">Avgang kl. 02:00. Soloppgang over krateret fra jeep. Magisk — men krevende.</div>
+        <div class="act-price">800k IDR <span class="act-nok">(≈ 536 NOK)</span></div>
+      </div>
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🐢</span>
+        <div class="act-title">Snorkling — Gili T</div>
+        <div class="act-where">Gili Trawangan</div>
+        <div class="act-desc">Svøm rett fra østkysten — havskildpadder garantert. Gratis eller lei utstyr.</div>
+        <div class="act-price">50k IDR utstyrslei <span class="act-nok">(≈ 34 NOK)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ BEACH CLUBS ══════════════════ -->
+<div id="beachclubs" class="page">
+  <div class="hero" style="padding:50px 56px 40px">
+    <div class="hero-eyebrow">Pool · DJ · Utsikt</div>
+    <h1 style="font-size:64px">BEACH<span class="accent">CLUBS</span></h1>
+  </div>
+  <div class="content">
+    <div class="section-label">Bali's beste</div>
+    <ul class="check-list" style="margin-bottom:24px" role="list">
+      <li>
+        <div class="spot-item" style="grid-template-columns:160px 1fr auto;display:contents">
+          <div><div class="spot-name">Finns VIP Beach Club</div><div class="spot-area">Canggu</div></div>
+          <div class="spot-desc">Massive anlegg — basseng, DJ, restaurant, gym. Åpen daglig. Minimum forbruk for cabana-plasser. Bestill bord hvis > 4 pers.</div>
+          <div class="spot-tip">09:00–22:00 · Min. 400k IDR pp<br><span style="color:var(--muted);font-size:10px">(≈ 268 NOK)</span></div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="activity-grid">
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🏊</span>
+        <div class="act-title">Finns VIP Beach Club</div>
+        <div class="act-where">Canggu · Pantai Batu Bolong</div>
+        <div class="act-desc">Balis største beach club. 3 bassenger, DJ, restaurant, bar. VIP-seksjoner med kanapé og butler.</div>
+        <div class="act-price">Min. 400k IDR pp <span class="act-nok">(≈ 268 NOK)</span></div>
+      </div>
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🌊</span>
+        <div class="act-title">Savaya Beach Club</div>
+        <div class="act-where">Uluwatu · Cliffside</div>
+        <div class="act-desc">Balis mest spektakulære — amfiteater-bassenger på klippekant over havet. Bestill LENGE i forveien.</div>
+        <div class="act-price">Min. 1,5 mill IDR pp <span class="act-nok">(≈ 1 005 NOK)</span></div>
+      </div>
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🥂</span>
+        <div class="act-title">Potato Head Beach Club</div>
+        <div class="act-where">Seminyak</div>
+        <div class="act-desc">Ikonisk rund basseng-design. Kunstinstallasjon og strålende cocktails. Perfekt for siste ettermiddag.</div>
+        <div class="act-price">Min. 600k IDR pp <span class="act-nok">(≈ 402 NOK)</span></div>
+      </div>
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🌴</span>
+        <div class="act-title">Motel Mexicola</div>
+        <div class="act-where">Seminyak</div>
+        <div class="act-desc">Meksikansk tema — wild interiors, sterk tequila, live DJs. Mer nattklubb enn beach club. Åpner kl. 11.</div>
+        <div class="act-price">Min. 300k IDR pp <span class="act-nok">(≈ 201 NOK)</span></div>
+      </div>
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🎭</span>
+        <div class="act-title">Mason</div>
+        <div class="act-where">Seminyak</div>
+        <div class="act-desc">Ny favoritt — rooftop-bassseng, spektakulær view, matchen for Potato Head. Sett av hele kvelden.</div>
+        <div class="act-price">Min. 500k IDR pp <span class="act-nok">(≈ 335 NOK)</span></div>
+      </div>
+      <div class="act-card">
+        <span class="act-icon" aria-hidden="true">🌅</span>
+        <div class="act-title">Single Fin</div>
+        <div class="act-where">Uluwatu · Klippen</div>
+        <div class="act-desc">Uformell kliff-bar med Balisfossens beste solnedgang-utsikt. Burgers, øl, surfer-vibes.</div>
+        <div class="act-price">Ingen minimum</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ TRANSPORT ══════════════════ -->
+<div id="transport" class="page">
+  <div class="hero" style="padding:50px 56px 40px">
+    <div class="hero-eyebrow">Scooter · Båt · Apps</div>
+    <h1 style="font-size:64px">TRANS<span class="accent">PORT</span></h1>
+  </div>
+  <div class="content">
+    <div class="warning-box">
+      <strong>🚤 Padang Bai → Gili T:</strong> Padang Bai er ~2t fra Canggu på scooter. Start kl. 06:30 for 09:00-avgangen. Ha <strong>sjøsyketabletter</strong> — ta dem 30 min FØR avgang.
+    </div>
+    <div class="two-col">
+      <div class="transport-card">
+        <h3><span aria-hidden="true">🛵</span> Scooter på Bali</h3>
+        <ul class="check-list">
+          <li><div class="dot-g"></div><span>Lei for ~70–90k IDR/dag <span class="act-nok">(~47–60 NOK)</span>. Forhandle for ukeleis.</span></li>
+          <li><div class="dot-r"></div><span>Kjør alltid med hjelm — politiet bøtelegger.</span></li>
+          <li><div class="dot-r"></div><span>Sjekk at forsikringen dekker scooter.</span></li>
+          <li><div class="dot-r"></div><span>Internasjonalt førerkort er teknisk krav.</span></li>
+        </ul>
+      </div>
+      <div class="transport-card">
+        <h3><span aria-hidden="true">📱</span> Grab & Gojek</h3>
+        <ul class="check-list">
+          <li><div class="dot-g"></div><span><strong>Last ned begge apper</strong> og legg til kort FØR avreise.</span></li>
+          <li><div class="dot-g"></div><span>Sammenlign alltid pris mellom de to.</span></li>
+          <li><div class="dot-y"></div><span>Unngå bluebird-taxi fra flyplassen — Grab er mye billigere.</span></li>
+          <li><div class="dot-g"></div><span>GoCar / GrabCar for lengre turer med bagasje.</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="transport-card mt-sm">
+      <h3><span aria-hidden="true">🚲</span> På Gili-øyene</h3>
+      <ul class="check-list">
+        <li><div class="dot-g"></div><span><strong>Ingen biler på øyene.</strong> Alt foregår på sykkel eller cidomo (hestevogn).</span></li>
+        <li><div class="dot-g"></div><span>Lei sykkel for 30–50k IDR/dag <span class="act-nok">(~20–34 NOK)</span>.</span></li>
+        <li><div class="dot-g"></div><span>Rundt hele Gili T på sykkel tar ca. 1 time.</span></li>
+      </ul>
+    </div>
+    <div class="check-card mt" style="background:rgba(0,242,255,0.03);border-color:rgba(0,242,255,0.2)">
+      <div class="check-card-title" style="color:var(--teal)">🏥 Viktige numre — lagre disse NÅ</div>
+      <ul class="check-list">
+        <li><div class="dot-g"></div><span><strong>BIMC Hospital Kuta:</strong> +62 361 761263</span></li>
+        <li><div class="dot-g"></div><span><strong>Ambulanse Indonesia:</strong> 118</span></li>
+        <li><div class="dot-g"></div><span><strong>Norsk ambassade Jakarta:</strong> +62 21 2280 0700</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ TOOLS ══════════════════ -->
+<div id="tools" class="page">
+  <div class="hero" style="padding:50px 56px 40px">
+    <div class="hero-eyebrow">Interaktive verktøy</div>
+    <h1 style="font-size:64px">GUTTA<span class="accent">TOOLS</span></h1>
+  </div>
+  <div class="content">
+
+    <!-- DAGENS SJEF -->
+    <div class="section-label">👑 Dagens Sjef</div>
+    <div class="two-col">
+      <div class="boss-card">
+        <h3>HVEM BESTEMMER I DAG?</h3>
+        <div id="sjef-name" role="status" aria-live="polite" aria-label="Dagens sjef">—</div>
+        <div id="sjef-sub" role="status" aria-live="polite"></div>
+        <button class="spin-btn" id="spin-btn" onclick="trekkSjef()" aria-label="Trekk tilfeldig sjef">
+          🎲 TREKK SJEF
+        </button>
+      </div>
+      <div class="check-card">
+        <div class="check-card-title">Guttegjengen</div>
+        <div id="sjef-list" role="list"></div>
+      </div>
+    </div>
+
+    <!-- VALUTA -->
+    <div class="section-label mt">💱 Valutakalkulator</div>
+    <div class="currency-card">
+      <h3>IDR → NOK KALKULATOR</h3>
+      <div class="currency-input-row">
+        <label for="idr-input" class="sr-only">Beløp i IDR</label>
+        <input type="number" id="idr-input" class="currency-input" 
+               value="1000000" step="100000" min="0"
+               aria-label="Beløp i indonesiske rupiah"
+               oninput="calcCurrency()">
+        <button class="currency-btn" onclick="calcCurrency()" aria-label="Beregn">KALKUÉR</button>
+      </div>
+      <div class="quickset-row" role="group" aria-label="Hurtigvalg">
+        <button class="quickset-btn" onclick="setIDR(100000)" aria-label="100 000 IDR">100k IDR</button>
+        <button class="quickset-btn" onclick="setIDR(500000)" aria-label="500 000 IDR">500k IDR</button>
+        <button class="quickset-btn" onclick="setIDR(1000000)" aria-label="1 000 000 IDR">1 mill IDR</button>
+        <button class="quickset-btn" onclick="setIDR(2000000)" aria-label="2 000 000 IDR">2 mill IDR</button>
+        <button class="quickset-btn" onclick="setIDR(5000000)" aria-label="5 000 000 IDR">5 mill IDR</button>
+        <button class="quickset-btn" onclick="setIDR(10000000)" aria-label="10 000 000 IDR">10 mill IDR</button>
+      </div>
+      <div class="currency-result" role="status" aria-live="polite">
+        <div class="nok-big" id="nok-result">670</div>
+        <div class="nok-label" id="nok-sub">kr (1 mill IDR)</div>
+      </div>
+    </div>
+
+    <!-- BINTANG TELLER -->
+    <div class="section-label mt">🍺 Bintang-teller</div>
+    <div class="check-card">
+      <div class="check-card-title">Hold styr på enhetene 🍺</div>
+      <div class="bintang-grid" id="bintang-grid" role="group" aria-label="Bintang-teller per person"></div>
+      <div style="margin-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div id="bintang-total" style="font-family:'Space Mono',monospace;font-size:12px;color:var(--muted)" role="status" aria-live="polite"></div>
+        <button onclick="resetAllBintang()" 
+                style="padding:8px 16px;background:rgba(232,74,74,0.1);border:1px solid rgba(232,74,74,0.3);border-radius:8px;color:#e84a4a;font-family:'Space Mono',monospace;font-size:11px;cursor:pointer"
+                aria-label="Nullstill alle Bintang-tellere">
+          🗑️ Nullstill alle
+        </button>
+      </div>
+    </div>
+
+    <!-- eVOA SJEKKLISTE -->
+    <div class="section-label mt">📋 eVOA & Pass-sjekkliste</div>
+    <div class="two-col">
+      <div class="check-card">
+        <div class="check-card-title">🛂 eVOA-visum</div>
+        <ul class="check-list">
+          <li><div class="dot-r"></div><span>Søk på <strong>molina.imigrasi.go.id</strong> — tar 5 virkedager</span></li>
+          <li><div class="dot-r"></div><span>Passeller med minst <strong>6 mnd gyldighet</strong> etter innreise</span></li>
+          <li><div class="dot-r"></div><span>Bevis på <strong>retur-/viderebillett</strong></span></li>
+          <li><div class="dot-y"></div><span>Hotell-booking-bekreftelse</span></li>
+          <li><div class="dot-g"></div><span>Kostnader: ~USD 35 per person</span></li>
+        </ul>
+      </div>
+      <div class="check-card">
+        <div class="check-card-title">🎒 Pakk-sjekkliste</div>
+        <ul class="check-list">
+          <li><div class="dot-r"></div><span><strong>Reiseforsikring</strong> som dekker scooter + vannsport</span></li>
+          <li><div class="dot-r"></div><span><strong>Solkrem SPF50+</strong> — pakk mye</span></li>
+          <li><div class="dot-y"></div><span>Airalo eSIM (Asean-pakke)</span></li>
+          <li><div class="dot-g"></div><span>Ciprofloxacin 500mg (resept fra lege)</span></li>
+          <li><div class="dot-g"></div><span>Sjøsyketabletter til båttur</span></li>
+          <li><div class="dot-g"></div><span>Probiotika (start 3 dager FØR)</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ HELSE ══════════════════ -->
+<div id="helse" class="page">
+  <div class="hero" style="padding:50px 56px 40px">
+    <div class="hero-eyebrow">Bali Belly & andre ting</div>
+    <h1 style="font-size:64px">HELSE <span class="accent">& TIPS</span></h1>
+  </div>
+  <div class="content">
+    <div class="warning-box">
+      <strong>Hva er Bali Belly?</strong> Matforgiftning/mage-tarm-infeksjon. Opptil 50–60% av reisende opplever det. Symptomer: diaré, kvalme, mageknip, feber. Starter 12–48 timer etter eksponering. <strong>Kan unngås</strong> med enkle grep.
+    </div>
+    <div class="two-col">
+      <div class="check-card">
+        <div class="check-card-title"><span aria-hidden="true">🛡️</span> Forebygg</div>
+        <ul class="check-list">
+          <li><div class="dot-r"></div><span>Drikk <strong>ALDRI springvann</strong></span></li>
+          <li><div class="dot-r"></div><span>Unngå <strong>is</strong> på billige steder</span></li>
+          <li><div class="dot-y"></div><span>Forsiktig med rå salat fra gatestalls</span></li>
+          <li><div class="dot-g"></div><span>Vask alltid hender, ha håndsprit</span></li>
+          <li><div class="dot-g"></div><span>Spis fra travle warung-er</span></li>
+          <li><div class="dot-g"></div><span>Probiotika daglig fra 3 dager FØR avreise</span></li>
+        </ul>
+      </div>
+      <div class="check-card">
+        <div class="check-card-title"><span aria-hidden="true">💊</span> Behandling</div>
+        <ul class="check-list">
+          <li><div class="dot-r"></div><span><strong>Ciprofloxacin 500mg</strong> — 2x daglig i 3 dager</span></li>
+          <li><div class="dot-r"></div><span><strong>Imodium</strong> — stopper diaré raskt</span></li>
+          <li><div class="dot-g"></div><span><strong>Dioralyte</strong> — drikk så mye som mulig</span></li>
+          <li><div class="dot-y"></div><span><strong>Buscopan</strong> — mot mageknip</span></li>
+          <li><div class="dot-g"></div><span>Hvil og unngå alkohol og sterk mat</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="check-card mt" style="background:rgba(255,77,0,0.04);border-color:rgba(255,77,0,0.2)">
+      <div class="check-card-title" style="color:var(--neon2)"><span aria-hidden="true">🐒</span> Ape-tips ved Uluwatu</div>
+      <ul class="check-list">
+        <li><div class="dot-r"></div><span>Ingen solbriller på hodet, ingen synlige snacks</span></li>
+        <li><div class="dot-r"></div><span>Hold veske tett inntil kroppen — de åpner glidelås</span></li>
+        <li><div class="dot-y"></div><span>Guidene hjelper deg å få ting tilbake mot mat</span></li>
+        <li><div class="dot-r"></div><span>Apebitt → gå til lege umiddelbart (rabies)</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</main><!-- /#main -->
+
+<!-- sr-only for accessibility -->
+<style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>
+
+<script>
+// ─── NAVIGATION ───
+function show(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); n.removeAttribute('aria-current'); });
+  document.getElementById(id).classList.add('active');
+  if (el) { el.classList.add('active'); el.setAttribute('aria-current','page'); }
+  window.scrollTo(0,0);
+
+  // Init maps lazily
+  if (id === 'kart') { initMaps(); }
+}
+
+// ─── SIDEBAR MOBILE ───
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const btn = document.getElementById('burger-btn');
+  const open = sb.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+}
+
+// ─── COUNTDOWN ───
+(function initCountdown() {
+  const target = new Date('2026-05-25T09:00:00+08:00').getTime();
+
+  function pad(n) { return String(n).padStart(2,'0'); }
+
+  function tick() {
+    const now = Date.now();
+    const diff = target - now;
+
+    if (diff <= 0) {
+      document.getElementById('countdown-live').style.display = 'none';
+      document.getElementById('countdown-fired').style.display = 'block';
+      return;
+    }
+
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+
+    document.getElementById('cd-d').textContent = pad(d);
+    document.getElementById('cd-h').textContent = pad(h);
+    document.getElementById('cd-m').textContent = pad(m);
+    document.getElementById('cd-s').textContent = pad(s);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+
+// ─── CURRENCY ───
+const IDR_RATE = 670 / 1000000;
+
+function calcCurrency() {
+  const idr = parseFloat(document.getElementById('idr-input').value) || 0;
+  const nok = idr * IDR_RATE;
+  const el = document.getElementById('nok-result');
+  el.textContent = Math.round(nok).toLocaleString('nb-NO');
+  document.getElementById('nok-sub').textContent = 'kr (' + formatIDR(idr) + ' IDR)';
+}
+
+function formatIDR(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1).replace('.0','') + ' mill';
+  if (n >= 1000) return Math.round(n/1000) + 'k';
+  return String(n);
+}
+
+function setIDR(val) {
+  document.getElementById('idr-input').value = val;
+  calcCurrency();
+}
+calcCurrency();
+
+// ─── DAGENS SJEF ───
+const NAMES = ['Stian', 'Karl', 'Christoffer', 'Benjamin'];
+const TITLES = [
+  'Bestemmer restauranten 🍽️',
+  'Velger aktivitetene 🏄',
+  'Velger musikken i taksi 🎶',
+  'Bestemmer antall runder 🍺',
+  'Kaptein på skuta ⛵',
+  'Diktator for 24 timer 👑',
+  'Velger strandbar 🌴',
+];
+let lastSjef = -1;
+
+function trekkSjef() {
+  let idx;
+  do { idx = Math.floor(Math.random() * NAMES.length); } while (idx === lastSjef && NAMES.length > 1);
+  lastSjef = idx;
+  const el = document.getElementById('sjef-name');
+  el.textContent = NAMES[idx].toUpperCase();
+  el.classList.remove('spinning');
+  void el.offsetWidth;
+  el.classList.add('spinning');
+  document.getElementById('sjef-sub').textContent = TITLES[Math.floor(Math.random() * TITLES.length)];
+}
+
+function renderSjefList() {
+  const list = document.getElementById('sjef-list');
+  if (!list) return;
+  list.innerHTML = NAMES.map((n,i) => `
+    <div role="listitem" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--muted)">
+      <div style="width:26px;height:26px;border-radius:50%;background:rgba(255,77,0,0.15);border:1px solid rgba(255,77,0,0.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono';font-size:11px;color:var(--neon)">${i+1}</div>
+      <span style="color:var(--text);font-weight:500">${n}</span>
+    </div>
+  `).join('');
+}
+renderSjefList();
+
+// ─── BINTANG ───
+const BINTANG_KEY = 'bali2026_bintang_v2';
+
+function loadBintang() {
+  try { const d=localStorage.getItem(BINTANG_KEY); return d?JSON.parse(d):{}; } catch(e){return{};}
+}
+function saveBintang(data) {
+  try { localStorage.setItem(BINTANG_KEY,JSON.stringify(data)); } catch(e){}
+}
+function renderBintang() {
+  const data = loadBintang();
+  const grid = document.getElementById('bintang-grid');
+  if (!grid) return;
+  let total = 0;
+  grid.innerHTML = NAMES.map(name => {
+    const key = name.toLowerCase();
+    const count = data[key]||0; total += count;
+    const emoji = count>=20?'💀':count>=15?'🤢':count>=10?'😵':count>=5?'😅':count>=1?'🍺':'🥤';
+    return `
+      <div class="bintang-person" role="listitem">
+        <div class="bintang-name" aria-label="${name}">${name}</div>
+        <div class="bintang-emoji" role="img" aria-label="Status">${emoji}</div>
+        <div class="bintang-count" role="status" aria-label="${count} enheter">${count}</div>
+        <div class="bintang-controls">
+          <button class="bintang-btn minus" onclick="changeBintang('${key}',-1)" aria-label="Minus en enhet for ${name}">−</button>
+          <button class="bintang-btn plus" onclick="changeBintang('${key}',1)" aria-label="Pluss en enhet for ${name}">+</button>
+        </div>
+      </div>`;
+  }).join('');
+  const tot = document.getElementById('bintang-total');
+  if (tot) {
+    tot.textContent = total>0 ? `Totalt: ${total} enheter 🍺` : 'Ingen enheter registrert enda';
+  }
+}
+function changeBintang(key,delta) {
+  const data=loadBintang();
+  data[key]=Math.max(0,(data[key]||0)+delta);
+  saveBintang(data); renderBintang();
+}
+function resetAllBintang() {
+  if (confirm('Nullstille alle Bintang-tellere?')) { saveBintang({}); renderBintang(); }
+}
+renderBintang();
+
+// ─── LEAFLET MAPS ───
+let mapsInitialized = false;
+
+function initMaps() {
+  if (mapsInitialized) return;
+  mapsInitialized = true;
+
+  // Dark tile layer
+  const darkTile = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+  const tileAttr = '&copy; <a href="https://carto.com/">CARTO</a>';
+
+  // ── MAP 1: HOTSPOTS ──
+  const map1 = L.map('map-hotspots', { zoomControl:true, scrollWheelZoom:false })
+    .setView([-8.68, 115.13], 11);
+
+  L.tileLayer(darkTile, { attribution:tileAttr, maxZoom:18 }).addTo(map1);
+
+  const hotspots = [
+    {
+      lat:-8.6449, lng:115.1322,
+      name:'Finns VIP Beach Club',
+      time:'Åpner 09:00 — 22:00',
+      desc:'Canggu · Balis største beach club. Min. 400k IDR pp.',
+      color:'#ff4d00'
+    },
+    {
+      lat:-8.8283, lng:115.0875,
+      name:'Savaya Beach Club',
+      time:'Åpner 10:00 — 23:00',
+      desc:'Uluwatu · Amfiteater-bassenger på klippekanten. Min. 1,5 mill IDR pp.',
+      color:'#00f2ff'
+    },
+    {
+      lat:-8.6913, lng:115.1604,
+      name:'Potato Head Beach Club',
+      time:'Åpner 09:00 — 23:00',
+      desc:'Seminyak · Ikonisk rund design. Min. 600k IDR pp.',
+      color:'#ffab00'
+    },
+    {
+      lat:-8.6931, lng:115.1641,
+      name:'Motel Mexicola',
+      time:'Åpner 11:00 — 02:00',
+      desc:'Seminyak · Meksikansk tema, sterk tequila, live DJs.',
+      color:'#ff4d00'
+    },
+    {
+      lat:-8.6958, lng:115.1651,
+      name:'Mason',
+      time:'Åpner 11:00 — 01:00',
+      desc:'Seminyak · Rooftop basseng med spektakulær view.',
+      color:'#00f2ff'
+    },
+  ];
+
+  hotspots.forEach(h => {
+    const icon = L.divIcon({
+      className:'',
+      html:`<div style="width:14px;height:14px;border-radius:50%;background:${h.color};border:2px solid #05070a;box-shadow:0 0 12px ${h.color}88;"></div>`,
+      iconSize:[14,14], iconAnchor:[7,7], popupAnchor:[0,-10]
+    });
+    L.marker([h.lat, h.lng], { icon, alt:h.name })
+      .addTo(map1)
+      .bindPopup(`
+        <div class="popup-title">${h.name}</div>
+        <div class="popup-time">${h.time}</div>
+        <div class="popup-desc">${h.desc}</div>
+      `);
+  });
+
+  // ── MAP 2: TRANSPORT ──
+  const map2 = L.map('map-transport', { zoomControl:true, scrollWheelZoom:false })
+    .setView([-8.45, 116.05], 9);
+
+  L.tileLayer(darkTile, { attribution:tileAttr, maxZoom:18 }).addTo(map2);
+
+  const routePoints = [
+    [-8.5333, 115.5083], // Padang Bai
+    [-8.3500, 115.7500], // between
+    [-8.1900, 115.8900], // between
+    [-8.3500, 116.0383], // Gili Trawangan approach
+    [-8.3521, 116.0383], // Gili Trawangan
+  ];
+
+  L.polyline(routePoints, {
+    color:'#00f2ff', weight:3, opacity:0.8,
+    dashArray:'12,8'
+  }).addTo(map2);
+
+  const boatIcon = (label, color) => L.divIcon({
+    className:'',
+    html:`<div style="background:${color};color:#05070a;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;padding:4px 8px;border-radius:6px;white-space:nowrap;box-shadow:0 0 16px ${color}88;">${label}</div>`,
+    iconAnchor:[40,20]
+  });
+
+  L.marker([-8.5333, 115.5083], {
+    icon: boatIcon('🚢 Padang Bai', '#ff4d00'),
+    alt:'Padang Bai'
+  }).addTo(map2).bindPopup('<div class="popup-title">Padang Bai</div><div class="popup-time">Avgang ~09:00 WITA</div><div class="popup-desc">Bali · Start ~2t kjøretur fra Canggu. Ta sjøsyketabl. FØR avgang.</div>');
+
+  L.marker([-8.3521, 116.0383], {
+    icon: boatIcon('🏝️ Gili Trawangan', '#00f2ff'),
+    alt:'Gili Trawangan'
+  }).addTo(map2).bindPopup('<div class="popup-title">Gili Trawangan</div><div class="popup-time">Ankomst ~11:30 WITA</div><div class="popup-desc">~2 timers speedbåt. Lei sykkel ved ankomst. Ingen biler på øya!</div>');
+}
+</script>
+</body>
+</html>

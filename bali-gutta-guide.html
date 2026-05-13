@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bali 2025 — Gutta på tur</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --sand: #F5EDD8;
+  --sand2: #EDE0C4;
+  --dark: #1A1612;
+  --dark2: #2C2620;
+  --brown: #5C3D1E;
+  --orange: #E8622A;
+  --orange2: #F0854A;
+  --teal: #1A7A6E;
+  --teal2: #25A896;
+  --cream: #FAF5EA;
+  --muted: #7A6D5E;
+  --border: rgba(92,61,30,0.18);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--dark);
+  color: var(--sand);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 220px;
+  height: 100vh;
+  background: var(--dark2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-logo .trip-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 2px;
+  color: var(--orange);
+  line-height: 1;
+}
+
+.sidebar-logo .trip-dates {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 4px;
+  font-family: 'DM Mono', monospace;
+}
+
+.nav-section-label {
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 18px 24px 6px;
+  font-family: 'DM Mono', monospace;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  border-left: 2px solid transparent;
+  text-decoration: none;
+}
+.nav-item:hover { color: var(--sand); background: rgba(255,255,255,0.04); }
+.nav-item.active { color: var(--orange); border-left-color: var(--orange); background: rgba(232,98,42,0.08); }
+
+.nav-icon { font-size: 16px; width: 18px; text-align: center; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px 24px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ── MAIN ── */
+#main {
+  margin-left: 220px;
+  min-height: 100vh;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, var(--dark2) 0%, #0D1F1C 100%);
+  padding: 80px 60px 60px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero::before {
+  content: 'BALI';
+  position: absolute;
+  right: -20px;
+  top: -10px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 240px;
+  color: rgba(255,255,255,0.03);
+  letter-spacing: -5px;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--teal2);
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 80px;
+  line-height: 0.9;
+  letter-spacing: 3px;
+  color: var(--sand);
+  margin-bottom: 20px;
+}
+
+.hero h1 span { color: var(--orange); }
+
+.hero-sub {
+  font-size: 15px;
+  color: var(--muted);
+  max-width: 500px;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 48px;
+}
+
+.stat { }
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 42px;
+  color: var(--orange);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-family: 'DM Mono', monospace;
+  margin-top: 2px;
+}
+
+.hero-destinations {
+  display: flex;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.dest-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sand2);
+}
+
+.dest-pill .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
+
+/* ── CONTENT AREA ── */
+.content {
+  padding: 50px 60px;
+}
+
+.page-header {
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-header .label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--teal2);
+  margin-bottom: 10px;
+}
+
+.page-header h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  letter-spacing: 2px;
+  color: var(--sand);
+  line-height: 1;
+}
+
+/* ── TIMELINE ── */
+.timeline { display: flex; flex-direction: column; gap: 0; }
+
+.tl-group { margin-bottom: 40px; }
+
+.tl-group-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 3px;
+  color: var(--orange);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tl-group-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.tl-item {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+
+.tl-item:last-child { border-bottom: none; }
+
+.tl-date {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  padding-top: 2px;
+}
+
+.tl-day-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  color: var(--teal2);
+  line-height: 1;
+}
+
+.tl-body {}
+.tl-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sand);
+  margin-bottom: 6px;
+}
+
+.tl-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.tl-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.5px;
+}
+.tag-orange { background: rgba(232,98,42,0.15); color: var(--orange2); border: 1px solid rgba(232,98,42,0.3); }
+.tag-teal { background: rgba(26,122,110,0.2); color: var(--teal2); border: 1px solid rgba(37,168,150,0.3); }
+.tag-sand { background: rgba(245,237,216,0.08); color: var(--sand2); border: 1px solid var(--border); }
+
+/* ── CHECKLIST GRID ── */
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.check-card {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+}
+
+.check-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-family: 'DM Mono', monospace;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.check-card-title .ico { font-size: 16px; }
+
+.check-list { list-style: none; }
+.check-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 13px;
+  color: var(--muted);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  line-height: 1.5;
+  font-weight: 300;
+}
+.check-list li:last-child { border-bottom: none; }
+.check-list li strong { color: var(--sand); font-weight: 500; }
+
+.dot-r { width: 7px; height: 7px; border-radius: 50%; background: #E24B4A; flex-shrink: 0; margin-top: 5px; }
+.dot-g { width: 7px; height: 7px; border-radius: 50%; background: #639922; flex-shrink: 0; margin-top: 5px; }
+.dot-y { width: 7px; height: 7px; border-radius: 50%; background: #BA7517; flex-shrink: 0; margin-top: 5px; }
+
+.badge-urgent {
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(226,75,74,0.2);
+  color: #F09595;
+  border: 1px solid rgba(226,75,74,0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'DM Mono', monospace;
+  margin-left: 8px;
+}
+
+/* ── ACTIVITY CARDS ── */
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.act-card {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  cursor: default;
+  transition: border-color 0.2s;
+}
+.act-card:hover { border-color: var(--orange); }
+
+.act-icon { font-size: 28px; margin-bottom: 12px; }
+.act-title { font-size: 14px; font-weight: 600; color: var(--sand); margin-bottom: 6px; }
+.act-where {
+  font-size: 11px;
+  color: var(--teal2);
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.act-desc { font-size: 12px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+
+.act-price {
+  margin-top: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--orange2);
+}
+
+/* ── APP GRID ── */
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.app-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.app-emoji { font-size: 24px; flex-shrink: 0; }
+.app-info {}
+.app-name { font-size: 13px; font-weight: 600; color: var(--sand); }
+.app-desc { font-size: 12px; color: var(--muted); font-weight: 300; margin-top: 2px; }
+.app-priority {
+  margin-left: auto;
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+.prio-must { background: rgba(232,98,42,0.2); color: var(--orange2); border: 1px solid rgba(232,98,42,0.3); }
+.prio-rec { background: rgba(26,122,110,0.2); color: var(--teal2); border: 1px solid rgba(37,168,150,0.3); }
+
+/* ── HEALTH ── */
+.warning-box {
+  background: rgba(232,98,42,0.08);
+  border: 1px solid rgba(232,98,42,0.25);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: var(--sand2);
+  line-height: 1.7;
+  font-weight: 300;
+}
+.warning-box strong { color: var(--orange2); font-weight: 500; }
+
+/* ── SPOTS TABLE ── */
+.spots-section { margin-bottom: 36px; }
+.spots-section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: var(--teal2);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.spots-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.spots-list { list-style: none; }
+.spot-item {
+  display: grid;
+  grid-template-columns: 180px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.spot-item:last-child { border-bottom: none; }
+.spot-name { font-size: 13px; font-weight: 600; color: var(--sand); }
+.spot-area { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-family: 'DM Mono', monospace; margin-top: 2px; }
+.spot-desc { font-size: 12px; color: var(--muted); font-weight: 300; }
+.spot-tip { font-size: 11px; color: var(--orange2); font-family: 'DM Mono', monospace; text-align: right; }
+
+/* ── TRANSPORT ── */
+.transport-card {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.transport-card h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--sand);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.transport-card h3 span { color: var(--orange); font-size: 28px; }
+
+/* ── UTILITY ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.mt { margin-top: 32px; }
+.mt-sm { margin-top: 16px; }
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.6;
+  font-weight: 300;
+  color: var(--muted);
+}
+.info-row:last-child { border-bottom: none; }
+.info-row strong { color: var(--sand); font-weight: 500; }
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  #sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    padding: 8px;
+  }
+  #main { margin-left: 0; }
+  .sidebar-logo { display: none; }
+  .nav-section-label { display: none; }
+  .nav-item { padding: 8px 12px; font-size: 12px; border-left: none; border-bottom: 2px solid transparent; }
+  .nav-item.active { border-left: none; border-bottom-color: var(--orange); }
+  .hero { padding: 40px 24px; }
+  .hero h1 { font-size: 52px; }
+  .hero-stats { gap: 24px; }
+  .content { padding: 30px 24px; }
+  .checklist-grid, .activity-grid, .two-col, .three-col, .app-grid {
+    grid-template-columns: 1fr;
+  }
+  .tl-item { grid-template-columns: 70px 1fr; gap: 12px; }
+  .spot-item { grid-template-columns: 1fr; }
+  .spot-tip { text-align: left; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="trip-name">BALI 2025</div>
+    <div class="trip-dates">26 MAI — 7 JUNI</div>
+  </div>
+
+  <div class="nav-section-label">Oversikt</div>
+  <a class="nav-item active" onclick="show('home')">
+    <span class="nav-icon">🌴</span> Hjem
+  </a>
+  <a class="nav-item" onclick="show('plan')">
+    <span class="nav-icon">📅</span> Reiseplan
+  </a>
+
+  <div class="nav-section-label">Forberedelse</div>
+  <a class="nav-item" onclick="show('prep')">
+    <span class="nav-icon">✅</span> Sjekkliste
+  </a>
+  <a class="nav-item" onclick="show('pack')">
+    <span class="nav-icon">🎒</span> Pakkeliste
+  </a>
+  <a class="nav-item" onclick="show('apps')">
+    <span class="nav-icon">📱</span> Apper & eSIM
+  </a>
+
+  <div class="nav-section-label">Bali</div>
+  <a class="nav-item" onclick="show('aktiviteter')">
+    <span class="nav-icon">🤙</span> Aktiviteter
+  </a>
+  <a class="nav-item" onclick="show('spots')">
+    <span class="nav-icon">📍</span> Steder & spots
+  </a>
+  <a class="nav-item" onclick="show('mat')">
+    <span class="nav-icon">🍜</span> Mat & drikke
+  </a>
+  <a class="nav-item" onclick="show('transport')">
+    <span class="nav-icon">🚤</span> Transport
+  </a>
+  <a class="nav-item" onclick="show('helse')">
+    <span class="nav-icon">💊</span> Helse & tips
+  </a>
+
+  <div class="sidebar-footer">Made for the boys 🤙</div>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- HOME -->
+  <div id="home" class="page active">
+    <div class="hero">
+      <div class="hero-eyebrow">Gutta på tur — Indonesia 2025</div>
+      <h1>BALI<br><span>GUIDE</span></h1>
+      <p class="hero-sub">Alt dere trenger. Reiseplan, pakkeliste, aktiviteter, strender, transport og helsetips — samlet på ett sted.</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">13</div>
+          <div class="stat-label">Netter</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Destinasjoner</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">26</div>
+          <div class="stat-label">Aktiviteter</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">0</div>
+          <div class="stat-label">Unnskyldninger</div>
+        </div>
+      </div>
+      <div class="hero-destinations">
+        <div class="dest-pill">
+          <div class="dot" style="background:var(--orange)"></div>
+          Canggu · 5 netter
+        </div>
+        <div class="dest-pill">
+          <div class="dot" style="background:var(--teal2)"></div>
+          Gili Islands · 3–4 netter
+        </div>
+        <div class="dest-pill">
+          <div class="dot" style="background:#BA7517"></div>
+          Uluwatu · 3 netter
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section-label">Rask oversikt</div>
+      <div class="three-col">
+        <div class="check-card">
+          <div class="check-card-title"><span class="ico">⚡</span> Gjør nå</div>
+          <ul class="check-list">
+            <li><div class="dot-r"></div><span><strong>Søk eVisa</strong> på molina.imigrasi.go.id — tar 5 virkedager</span></li>
+            <li><div class="dot-r"></div><span>Sjekk at passet ditt er gyldig til <strong>desember 2025</strong></span></li>
+            <li><div class="dot-r"></div><span>Bestill <strong>Airalo eSIM</strong> — Asean-pakke</span></li>
+            <li><div class="dot-y"></div><span>Bestill <strong>Gili-båt</strong> via Eka Jaya</span></li>
+            <li><div class="dot-y"></div><span>Sjekk reiseforsikring dekker <strong>scooter + vannsport</strong></span></li>
+          </ul>
+        </div>
+        <div class="check-card">
+          <div class="check-card-title"><span class="ico">🌊</span> Canggu-topp 3</div>
+          <ul class="check-list">
+            <li><div class="dot-g"></div><span>Surfing på <strong>Batu Bolong Beach</strong></span></li>
+            <li><div class="dot-g"></div><span>Trening & Muay Thai på <strong>Reload Sanctuary</strong></span></li>
+            <li><div class="dot-g"></div><span><strong>G Swing</strong> — gynge over havet</span></li>
+          </ul>
+        </div>
+        <div class="check-card">
+          <div class="check-card-title"><span class="ico">🐠</span> Gili-topp 3</div>
+          <ul class="check-list">
+            <li><div class="dot-g"></div><span>Snorkle med <strong>havskildpadder</strong> rett fra stranda</span></li>
+            <li><div class="dot-g"></div><span>Dykking hos <strong>DPM Diving</strong> (5★)</span></li>
+            <li><div class="dot-g"></div><span>Solnedgang ved <strong>West Sunset Point</strong></span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt">
+        <div class="section-label">Uluwatu-topp</div>
+        <div class="three-col">
+          <div class="check-card">
+            <div class="check-card-title"><span class="ico">🏄</span> Surf & kliff</div>
+            <ul class="check-list">
+              <li><div class="dot-g"></div><span><strong>Uluwatu surf spot</strong> — verdensklasse venstrebølge</span></li>
+              <li><div class="dot-g"></div><span><strong>Karang Boma Cliff</strong> — solnedgang over havet</span></li>
+              <li><div class="dot-g"></div><span><strong>Single Fin</strong> bar — klippe-bar over bølgen</span></li>
+            </ul>
+          </div>
+          <div class="check-card">
+            <div class="check-card-title"><span class="ico">🔥</span> Må gjøres</div>
+            <ul class="check-list">
+              <li><div class="dot-g"></div><span><strong>Kecak-dans</strong> ved Uluwatu-tempelet kl. 18:00</span></li>
+              <li><div class="dot-g"></div><span><strong>Sunrise Jeep</strong> til Gunung Batur vulkan</span></li>
+              <li><div class="dot-g"></div><span><strong>ATV ride</strong> gjennom jungel og rismarker</span></li>
+            </ul>
+          </div>
+          <div class="check-card">
+            <div class="check-card-title"><span class="ico">💰</span> Pengetips</div>
+            <ul class="check-list">
+              <li><div class="dot-g"></div><span>Bruk <strong>Wise-kort</strong> — beste kurs, null gebyrer</span></li>
+              <li><div class="dot-g"></div><span>BCA/Mandiri minibank er tryggest</span></li>
+              <li><div class="dot-y"></div><span>Ha alltid <strong>kontanter</strong> — mange steder kun cash</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REISEPLAN -->
+  <div id="plan" class="page">
+    <div class="hero" style="padding:50px 60px 40px">
+      <div class="hero-eyebrow">Dag for dag</div>
+      <h1 style="font-size:60px">REISE<span>PLAN</span></h1>
+    </div>
+    <div class="content">
+      <div class="timeline">
+
+        <div class="tl-group">
+          <div class="tl-group-title">🌊 CANGGU — 26. mai – 31. mai</div>
+
+          <div class="tl-item">
+            <div>
+              <div class="tl-day-num">D1</div>
+              <div class="tl-date">26 MAI<br>SØN</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">Ankomst & første inntrykk</div>
+              <div class="tl-desc">Dere lander etter lang reise. Sjekk inn, hent scooter (70–80k IDR/dag), spis en enkel middag langs Batu Bolong. Hold det rolig — jetlag er ekte.</div>
+              <div class="tl-tags">
+                <span class="tag tag-sand">✈️ Ankomst</span>
+                <span class="tag tag-teal">🛵 Lei scooter</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div>
+              <div class="tl-day-num">D2</div>
+              <div class="tl-date">27 MAI<br>MAN</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">Bli kjent med Canggu + Tanah Lot</div>
+              <div class="tl-desc">Frokost på Neighbourhood Coffee eller Betelnut. Surfetime på Batu Bolong (Surf Coco, 400k IDR). Ettermiddag: kjør til Tanah Lot — sjøtempel i solnedgang. Spis langs stranda etterpå.</div>
+              <div class="tl-tags">
+                <span class="tag tag-orange">🏄 Surfing</span>
+                <span class="tag tag-teal">🛕 Tanah Lot</span>
+                <span class="tag tag-sand">🌅 Solnedgang</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div>
+              <div class="tl-day-num">D3</div>
+              <div class="tl-date">28 MAI<br>TIR</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">Trening + Echo Beach kveld</div>
+              <div class="tl-desc">Morgen på Reload Sanctuary — Muay Thai-klasse eller styrketre. Ettermiddag: slappe av, spa eller massage (billig og lett å finne). Kveld: Echo Beach med bean bags, mat og live musikk.</div>
+              <div class="tl-tags">
+                <span class="tag tag-orange">🥊 Muay Thai</span>
+                <span class="tag tag-teal">🏋️ Reload Gym</span>
+                <span class="tag tag-sand">🎵 Echo Beach</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div>
+              <div class="tl-day-num">D4</div>
+              <div class="tl-date">29 MAI<br>ONS</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">Dagstur Ubud — vulkan, tempel, ris</div>
+              <div class="tl-desc">Start tidlig kl. 07:00. Tegallalang rismarker → Tirta Empul hellig bad (ta med sarong) → Kecak-dans om kvelden. Tilbake til Canggu sent. Alternativt: book Sunrise Jeep til Gunung Batur denne natta (start 02:00).</div>
+              <div class="tl-tags">
+                <span class="tag tag-orange">🌋 Gunung Batur</span>
+                <span class="tag tag-teal">🛕 Tirta Empul</span>
+                <span class="tag tag-sand">🌾 Ubud</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div>
+              <div class="tl-day-num">D5</div>
+              <div class="tl-date">30 MAI<br>TOR</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">ATV ride + G Swing adrenalin</div>
+              <div class="tl-desc">ATV-ride gjennom jungel og rismarker i Ubud-området (350–500k IDR/t). Tilbake til Canggu: G Swing Bali ved Batu Mejan — katapult-gynge over havet, 5★ rangering. Kveld: Finns Beach Club eller Old Man's.</div>
+              <div class="tl-tags">
+                <span class="tag tag-orange">🏎️ ATV</span>
+                <span class="tag tag-orange">🎢 G Swing</span>
+                <span class="tag tag-teal">🍸 Beach Club</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div>
+              <div class="tl-day-num">D6</div>
+              <div class="tl-date">31 MAI<br>FRE</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">Rolig morgen + avreise til Gili</div>
+              <div class="tl-desc">Siste frokost, pakk og returner scooter. Kjør til Padang Bai (~2t) og ta speedbåten til Gili Trawangan (Eka Jaya, avgang ca. 09:00). Ankomst Gili T ettermiddag. Sjekk inn og utforsk øya til fots.</div>
+              <div class="tl-tags">
+                <span class="tag tag-sand">🚤 Padang Bai → Gili T</span>
+                <span class="tag tag-teal">🌴 Ankomst Gili</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-group">
+          <div class="tl-group-title">🐠 GILI ISLANDS — 1. jun – 4. jun</div>
+
+          <div class="tl-item">
+            <div>
+              <div class="tl-day-num">D7</div>
+              <div class="tl-date">1 JUN<br>SØN</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">Gili T — utforsk & solnedgang</div>
+              <div class="tl-desc">Lei sykler og rund hele øya (ca. 1 time). Snorkle rett fra stranda — havskildpadder på østsiden. Kveld ved West Sunset Point med drinker og den fineste solnedgangen på turen.</div>
+              <div class="tl-tags">
+                <span class="tag tag-teal">🐢 Snorkling</span>
+                <span class="tag tag-orange">🌅 West Sunset Point</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div>
+              <div class="tl-day-num">D8</div>
+              <div class="tl-date">2 JUN<br>MAN</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">Dykking + undervannsskulpturer</div>
+              <div class="tl-desc">Tidlig morgen: snorkle til Bask Nest-skulpturene (gå KL. 07:00 — etter 08:00 er det helt fullt). Dykk med DPM Diving eller Gili Divers etterpå — begge 5★. PADI Open Water-kurs mulig på 3 dager.</div>
+              <div class="tl-tags">
+                <span class="tag tag-orange">🤿 Dykking</span>
+                <span class="tag tag-teal">🗿 Undervannsskulpturer</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div>
+              <div class="tl-day-num">D9</div>
+              <div class="tl-date">3 JUN<br>TIR</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">Dagstur Gili Meno</div>
+              <div class="tl-desc">Kort båttur til den roligste av de tre øyene. Nesten ingen turister — hvit sand og turkist vann. Perfekt snorkeldestinasjon. Tilbake til Gili T om kvelden for middag og musikk langs stranda.</div>
+              <div class="tl-tags">
+                <span class="tag tag-teal">🏝️ Gili Meno</span>
+                <span class="tag tag-sand">🤿 Snorkling</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div>
+              <div class="tl-day-num">D10</div>
+              <div class="tl-date">4 JUN<br>ONS</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">Sykling + avreise til Uluwatu</div>
+              <div class="tl-desc">Sykkel til "That Sunset Tree" i sørenden — ikonisk utsiktsspot. Lunsj, pak og ta speedbåt tilbake til Bali (Sanur/Padang Bai). Kjør sørover til Uluwatu (~1,5t fra Sanur). Sjekk inn, enkel middag på klippen.</div>
+              <div class="tl-tags">
+                <span class="tag tag-sand">🚴 Sykling rundt øya</span>
+                <span class="tag tag-orange">🚤 → Uluwatu</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-group">
+          <div class="tl-group-title">🏄 ULUWATU — 5. jun – 7. jun</div>
+
+          <div class="tl-item">
+            <div>
+              <div class="tl-day-num">D11</div>
+              <div class="tl-date">5 JUN<br>TOR</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">Uluwatu-tempelet + Kecak-dans</div>
+              <div class="tl-desc">Utforsk området på scooter. Ettermiddag: Uluwatu Temple på klippen — gå tidlig og bruk god tid på stien. Kecak-dans starter kl. 18:00 ved tempelet — fantastisk i solnedgang. PASS PÅ APENE.</div>
+              <div class="tl-tags">
+                <span class="tag tag-teal">🛕 Uluwatu Temple</span>
+                <span class="tag tag-orange">💃 Kecak-dans</span>
+                <span class="tag tag-sand">🐒 Pass på aper!</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div>
+              <div class="tl-day-num">D12</div>
+              <div class="tl-date">6 JUN<br>FRE</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">Surfing + klipper + Jetski</div>
+              <div class="tl-desc">Morgensurf ved Uluwatu Beach — verdensklasse venstrebølge (kun viderekommende; nybegynnere ser på fra klippekafeen). Jetski ved Tanjung Benoa (~300k IDR/15min). Karang Boma Cliff for solnedgang. Kveld på Single Fin.</div>
+              <div class="tl-tags">
+                <span class="tag tag-orange">🏄 Uluwatu surf</span>
+                <span class="tag tag-orange">💨 Jetski</span>
+                <span class="tag tag-teal">🍸 Single Fin</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div>
+              <div class="tl-day-num">D13</div>
+              <div class="tl-date">7 JUN<br>LØR</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">GWK + avreise ✈️</div>
+              <div class="tl-desc">Morgenkjøring til Garuda Wisnu Kencana (GWK) — gigantisk statue og kulturshow. Deretter taxi/Grab til Ngurah Rai flyplass (30–45 min fra Uluwatu). Ha 2–3 timer til flyet. Ha en trygg reise hjem!</div>
+              <div class="tl-tags">
+                <span class="tag tag-teal">🦅 GWK Kulturpark</span>
+                <span class="tag tag-sand">✈️ Hjemreise</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SJEKKLISTE -->
+  <div id="prep" class="page">
+    <div class="hero" style="padding:50px 60px 40px">
+      <div class="hero-eyebrow">Gjør dette før dere drar</div>
+      <h1 style="font-size:60px">SJEKK<span>LISTE</span></h1>
+    </div>
+    <div class="content">
+      <div class="check-card" style="margin-bottom:20px; border-color:rgba(226,75,74,0.4)">
+        <div class="check-card-title" style="color:#F09595">
+          <span class="ico">🔴</span> eVisa — gjør NÅ
+          <span class="badge-urgent">Haster</span>
+        </div>
+        <ul class="check-list">
+          <li><div class="dot-r"></div><span>Søk på <strong>molina.imigrasi.go.id</strong> — behandlingstid 5–7 virkedager</span></li>
+          <li><div class="dot-r"></div><span>Koster ca. <strong>$35 USD</strong> — betal med kort</span></li>
+          <li><div class="dot-r"></div><span>Pass gyldig minst <strong>6 måneder</strong> etter innreise (26. mai)</span></li>
+          <li><div class="dot-y"></div><span>Ta screenshot + print fysisk kopi av godkjent visum</span></li>
+          <li><div class="dot-y"></div><span>Lagre PDF i telefonen offline</span></li>
+        </ul>
+      </div>
+
+      <div class="checklist-grid">
+        <div class="check-card">
+          <div class="check-card-title"><span class="ico">🏥</span> Helse & vaksiner</div>
+          <ul class="check-list">
+            <li><div class="dot-r"></div><span>Reiseforsikring dekker <strong>scooter og vannsport</strong> — sjekk vilkårene!</span></li>
+            <li><div class="dot-y"></div><span><strong>Hepatitt A</strong> — anbefalt vaksine, bestill hos lege</span></li>
+            <li><div class="dot-y"></div><span><strong>Tyfoid</strong> — anbefalt, særlig om dere spiser mye street food</span></li>
+            <li><div class="dot-g"></div><span>Probiotika-kapsler daglig fra 3 dager før avreise</span></li>
+            <li><div class="dot-g"></div><span>Ta med nok av egne reseptmedisiner</span></li>
+          </ul>
+        </div>
+
+        <div class="check-card">
+          <div class="check-card-title"><span class="ico">💳</span> Penger & bank</div>
+          <ul class="check-list">
+            <li><div class="dot-r"></div><span>Gi banken beskjed om reisen (noen banker blokkerer uten varsel)</span></li>
+            <li><div class="dot-g"></div><span>Bestill <strong>Wise-kort</strong> — wise.com, ta 2–3 uker</span></li>
+            <li><div class="dot-g"></div><span>Last ned <strong>Revolut</strong> som backup</span></li>
+            <li><div class="dot-y"></div><span>Ha litt euro/dollar som nødreserve</span></li>
+          </ul>
+        </div>
+
+        <div class="check-card">
+          <div class="check-card-title"><span class="ico">📅</span> Forhåndsbestillinger</div>
+          <ul class="check-list">
+            <li><div class="dot-y"></div><span>Book <strong>Gili-båt</strong> (Eka Jaya) — ekajayafastboat.com</span></li>
+            <li><div class="dot-y"></div><span>Kecak-dans ved Uluwatu — book på forhånd eller tidlig på dagen</span></li>
+            <li><div class="dot-g"></div><span>Surfetime Coco (WhatsApp: +62 812-2258-5912)</span></li>
+            <li><div class="dot-g"></div><span>Dykking DPM (WhatsApp: +62 812-3978-6575)</span></li>
+            <li><div class="dot-g"></div><span>ATV og Sunrise Jeep — bestill 1–2 dager i forveien</span></li>
+          </ul>
+        </div>
+
+        <div class="check-card">
+          <div class="check-card-title"><span class="ico">📱</span> Digitalt</div>
+          <ul class="check-list">
+            <li><div class="dot-r"></div><span>Kjøp <strong>Airalo eSIM</strong> Asean-pakke — aktiver på flyet</span></li>
+            <li><div class="dot-g"></div><span>Last ned <strong>Grab og Gojek</strong> (legg inn betalingskort)</span></li>
+            <li><div class="dot-g"></div><span>Last ned Google Maps — Bali <strong>offline</strong></span></li>
+            <li><div class="dot-g"></div><span>Lagre viktige WhatsApp-numre på forhånd</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAKKELISTE -->
+  <div id="pack" class="page">
+    <div class="hero" style="padding:50px 60px 40px">
+      <div class="hero-eyebrow">Hva tar du med?</div>
+      <h1 style="font-size:60px">PAKKE<span>LISTE</span></h1>
+    </div>
+    <div class="content">
+      <div class="two-col">
+        <div>
+          <div class="section-label">✅ Ha med</div>
+          <ul class="check-list" style="background:var(--dark2); border:1px solid var(--border); border-radius:12px; padding:20px 22px;">
+            <li><div class="dot-g"></div><span><strong>Reef-safe solkrem SPF 50</strong> — bruk daglig, selv på overskya</span></li>
+            <li><div class="dot-g"></div><span><strong>Sarong</strong> — eller kjøp for 30k IDR ved templer</span></li>
+            <li><div class="dot-g"></div><span><strong>Rash guard / UV-trøye</strong> — for surfing og snorkling</span></li>
+            <li><div class="dot-g"></div><span><strong>Sandaler + lette joggesko</strong></span></li>
+            <li><div class="dot-g"></div><span><strong>Powerbank (20 000mAh+)</strong> — lite strøm på Gili</span></li>
+            <li><div class="dot-g"></div><span><strong>Snorkelmaske</strong> — kvaliteten til leiemasker er dårlig</span></li>
+            <li><div class="dot-r"></div><span><strong>Imodium + Ciprofloxacin</strong> — mot Bali Belly</span></li>
+            <li><div class="dot-r"></div><span><strong>Rehydreringspulver</strong> (Dioralyte) — viktigst av alt</span></li>
+            <li><div class="dot-r"></div><span><strong>Myggmiddel DEET 30%+</strong> — dengue-mygg biter på dagtid</span></li>
+            <li><div class="dot-g"></div><span>Kopier av pass + eVisa — fysisk og digital</span></li>
+            <li><div class="dot-g"></div><span><strong>Hengelås</strong> — for locker på Gili/hostel</span></li>
+            <li><div class="dot-g"></div><span>Vannflaske med filter (Grayl/LifeStraw)</span></li>
+            <li><div class="dot-g"></div><span>Liten dagsekreklapp — lett og vanntett</span></li>
+            <li><div class="dot-y"></div><span>Paracetamol, Buscopan og Zink</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">❌ Kan droppe (kjøp der eller unødvendig)</div>
+          <ul class="check-list" style="background:var(--dark2); border:1px solid var(--border); border-radius:12px; padding:20px 22px;">
+            <li><div class="dot-r"></div><span><strong>Tykke klær</strong> — alltid 26–32°C. Maks én lett hettejakke til flyet.</span></li>
+            <li><div class="dot-r"></div><span><strong>Håndkle</strong> — inkludert de fleste plasser</span></li>
+            <li><div class="dot-r"></div><span><strong>Sjampo og balsam</strong> — kjøp billig lokalt</span></li>
+            <li><div class="dot-r"></div><span><strong>Adaptor</strong> — type C/F fungerer i Bali, har dere det hjemme?</span></li>
+            <li><div class="dot-r"></div><span><strong>Store mengder valuta fra Norge</strong> — ta ut IDR på Bali</span></li>
+            <li><div class="dot-r"></div><span><strong>Dyre surfebord</strong> — lei for 100–150k IDR/dag</span></li>
+            <li><div class="dot-r"></div><span><strong>Mange bøker/blad</strong> — dead weight</span></li>
+            <li><div class="dot-r"></div><span><strong>Fancy antrekk</strong> — casual er normen overalt</span></li>
+            <li><div class="dot-y"></div><span><strong>Regntøy</strong> — lett poncho er nok, kjøpes lokalt for 50k IDR</span></li>
+          </ul>
+
+          <div class="check-card mt-sm" style="border-color:rgba(26,122,110,0.4)">
+            <div class="check-card-title" style="color:var(--teal2)"><span class="ico">💊</span> Medisinskrin</div>
+            <ul class="check-list">
+              <li><div class="dot-r"></div><span><strong>Ciprofloxacin 500mg</strong> — resept fra lege, ta 3 dager ved Bali Belly</span></li>
+              <li><div class="dot-r"></div><span><strong>Imodium</strong> — stopper diare raskt</span></li>
+              <li><div class="dot-g"></div><span><strong>Dioralyte/Rehydreringspulver</strong> — drikk masse</span></li>
+              <li><div class="dot-y"></div><span><strong>Buscopan</strong> — mot mageknip</span></li>
+              <li><div class="dot-g"></div><span>Paracetamol + antiseptisk krem</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPER -->
+  <div id="apps" class="page">
+    <div class="hero" style="padding:50px 60px 40px">
+      <div class="hero-eyebrow">Essensielle nedlastinger</div>
+      <h1 style="font-size:60px">APPER <span>&</span> ESIM</h1>
+    </div>
+    <div class="content">
+      <div class="warning-box">
+        <strong>eSIM — gjør dette FØR avreise:</strong> Kjøp Airalo Asean-pakke på airalo.com. 10GB fra ca. 150kr, dekker Indonesia og 9+ land. Aktiver eSIM-innstillingen på telefonen og slå på den nye profilen idet dere lander i Bali.
+      </div>
+
+      <div class="section-label">Kritiske apper</div>
+      <div class="app-grid">
+        <div class="app-item">
+          <div class="app-emoji">🚗</div>
+          <div class="app-info">
+            <div class="app-name">Grab</div>
+            <div class="app-desc">Uber i Asia. Taxi + matlevering. Legg til kort nå.</div>
+          </div>
+          <div class="app-priority prio-must">MUST</div>
+        </div>
+        <div class="app-item">
+          <div class="app-emoji">🛵</div>
+          <div class="app-info">
+            <div class="app-name">Gojek</div>
+            <div class="app-desc">Samme som Grab — bruk begge og ta billigste.</div>
+          </div>
+          <div class="app-priority prio-must">MUST</div>
+        </div>
+        <div class="app-item">
+          <div class="app-emoji">💸</div>
+          <div class="app-info">
+            <div class="app-name">Wise</div>
+            <div class="app-desc">Beste valutakurs, null skjulte gebyrer. Bestill fysisk kort.</div>
+          </div>
+          <div class="app-priority prio-must">MUST</div>
+        </div>
+        <div class="app-item">
+          <div class="app-emoji">📶</div>
+          <div class="app-info">
+            <div class="app-name">Airalo</div>
+            <div class="app-desc">Kjøp eSIM her. Asean-pakke. Aktiver på flyet.</div>
+          </div>
+          <div class="app-priority prio-must">MUST</div>
+        </div>
+        <div class="app-item">
+          <div class="app-emoji">🗺️</div>
+          <div class="app-info">
+            <div class="app-name">Google Maps offline</div>
+            <div class="app-desc">Last ned Bali og Lombok-kart offline i dag.</div>
+          </div>
+          <div class="app-priority prio-must">MUST</div>
+        </div>
+        <div class="app-item">
+          <div class="app-emoji">💬</div>
+          <div class="app-info">
+            <div class="app-name">WhatsApp</div>
+            <div class="app-desc">Alle booker og kommuniserer via WhatsApp i Bali.</div>
+          </div>
+          <div class="app-priority prio-must">MUST</div>
+        </div>
+        <div class="app-item">
+          <div class="app-emoji">🌍</div>
+          <div class="app-info">
+            <div class="app-name">Google Translate</div>
+            <div class="app-desc">Last ned bahasa Indonesia offline. Kamerafunksjonen er nyttig.</div>
+          </div>
+          <div class="app-priority prio-rec">REC</div>
+        </div>
+        <div class="app-item">
+          <div class="app-emoji">💱</div>
+          <div class="app-info">
+            <div class="app-name">XE Currency</div>
+            <div class="app-desc">Sjekk IDR-kurs raskt. Vet du hva ting faktisk koster.</div>
+          </div>
+          <div class="app-priority prio-rec">REC</div>
+        </div>
+        <div class="app-item">
+          <div class="app-emoji">🗺️</div>
+          <div class="app-info">
+            <div class="app-name">Maps.me</div>
+            <div class="app-desc">100% offline kart, fungerer uten data i det hele tatt.</div>
+          </div>
+          <div class="app-priority prio-rec">REC</div>
+        </div>
+        <div class="app-item">
+          <div class="app-emoji">💊</div>
+          <div class="app-info">
+            <div class="app-name">Halodoc</div>
+            <div class="app-desc">Norsk lege på nett i Indonesia. Nyttig ved Bali Belly.</div>
+          </div>
+          <div class="app-priority prio-rec">REC</div>
+        </div>
+      </div>
+
+      <div class="mt">
+        <div class="section-label">eSIM-alternativer</div>
+        <div class="check-card">
+          <ul class="check-list">
+            <li><div class="dot-g"></div><span><strong>Airalo</strong> (anbefalt) — billigst, Asean 10GB fra ~150kr. airalo.com</span></li>
+            <li><div class="dot-g"></div><span><strong>Sikt</strong> — norsk, litt dyrere men enkel å sette opp</span></li>
+            <li><div class="dot-y"></div><span><strong>Holafly</strong> — ubegrenset data, høyere pris</span></li>
+            <li><div class="dot-y"></div><span>Sjekk at telefonen støtter eSIM — iPhone XS og nyere, og de fleste Android fra 2020+</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AKTIVITETER -->
+  <div id="aktiviteter" class="page">
+    <div class="hero" style="padding:50px 60px 40px">
+      <div class="hero-eyebrow">Gutta på tur — ultimate liste</div>
+      <h1 style="font-size:60px">AKTIVI<span>TETER</span></h1>
+    </div>
+    <div class="content">
+
+      <div class="section-label">Adrenalin</div>
+      <div class="activity-grid">
+        <div class="act-card">
+          <div class="act-icon">🏄</div>
+          <div class="act-title">Surfing</div>
+          <div class="act-where">Canggu + Uluwatu</div>
+          <div class="act-desc">Batu Bolong er perfekt for nybegynnere. Echo Beach for mellomklasse. Uluwatu er world-class kun for viderekommende.</div>
+          <div class="act-price">Surfetime: ~400k IDR</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🏎️</div>
+          <div class="act-title">ATV ride</div>
+          <div class="act-where">Ubud-området</div>
+          <div class="act-desc">Terrengsykling gjennom jungel, gjørmete spor og grønne rismarker. Mange operatører, bestill 1 dag i forveien.</div>
+          <div class="act-price">350–500k IDR / time</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🌋</div>
+          <div class="act-title">Sunrise Jeep-tur</div>
+          <div class="act-where">Gunung Batur</div>
+          <div class="act-desc">Start kl. 02:00. Jeep opp til kraterkanten. Solen bryter over vulkanen med utsikt over innsjøen. En av turens høydepunkter.</div>
+          <div class="act-price">~500k IDR inkl. guide</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">💨</div>
+          <div class="act-title">Jetski</div>
+          <div class="act-where">Tanjung Benoa, Nusa Dua</div>
+          <div class="act-desc">20 min fra Uluwatu. Raskt og enkelt. Kombiner med parasailing for full pakke.</div>
+          <div class="act-price">~300k IDR / 15 min</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🎢</div>
+          <div class="act-title">G Swing Bali</div>
+          <div class="act-where">Batu Mejan, Canggu</div>
+          <div class="act-desc">Katapult-gynge over sjøen fra en klippe. 5.0 stjerner på Google. Åpner kl. 12:00 (ons/tor fra 16:00). Filmer dere og sender video.</div>
+          <div class="act-price">Sjekk gswingbali.com</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🤿</div>
+          <div class="act-title">Dykking / snorkling</div>
+          <div class="act-where">Gili Trawangan</div>
+          <div class="act-desc">DPM Diving eller Gili Divers (begge 5★). PADI Open Water-kurs på 3 dager. Skildpadder og korall rett fra stranda.</div>
+          <div class="act-price">Fun dive: ~400k IDR</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Trening & kampsport</div>
+      <div class="activity-grid">
+        <div class="act-card">
+          <div class="act-icon">🥊</div>
+          <div class="act-title">Muay Thai</div>
+          <div class="act-where">Reload Sanctuary, Canggu</div>
+          <div class="act-desc">Daglige klasser med pro-instruktører. Alle nivåer. Reload er en av Asias beste reisende-gymmer. Begynn her dag 2.</div>
+          <div class="act-price">Dagspass + klasse: ~200k IDR</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🏋️</div>
+          <div class="act-title">Reload Sanctuary Gym</div>
+          <div class="act-where">Canggu</div>
+          <div class="act-desc">Enormt anlegg. Crossfit, styrke, yoga, BJJ, Muay Thai — alt under ett tak. Unnskyldning for å svette.</div>
+          <div class="act-price">Dagspass ~150k IDR</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🏊</div>
+          <div class="act-title">Klippe-basseng</div>
+          <div class="act-where">Natural Pool, Padang Padang</div>
+          <div class="act-desc">Naturlig basseng hugget i klippen ved Padang Padang. Gratis å bruke. Spektakulær utsikt og unikt badelsted.</div>
+          <div class="act-price">Gratis</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Beach clubs</div>
+      <div class="activity-grid">
+        <div class="act-card">
+          <div class="act-icon">🌴</div>
+          <div class="act-title">The Lawn</div>
+          <div class="act-where">Canggu</div>
+          <div class="act-desc">Solnedgangsvibes, uformelt og rimeligere enn konkurrentene. Bønnesekker på gresset, utsikt over havet.</div>
+          <div class="act-price">Ingen inngang</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🍺</div>
+          <div class="act-title">Old Man's</div>
+          <div class="act-where">Canggu</div>
+          <div class="act-desc">Klassisk bar for surfere. Øl, live musikk, blandede gjengjeld. Mer bar enn beach club, men alltid god stemning.</div>
+          <div class="act-price">Ingen inngang</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🎉</div>
+          <div class="act-title">Finns Beach Club</div>
+          <div class="act-where">Canggu</div>
+          <div class="act-desc">Stor og imponerende. Basseng, DJ, servise og utsikt. Verdt det én gang for opplevelsen.</div>
+          <div class="act-price">~200k IDR inngang</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🤙</div>
+          <div class="act-title">Single Fin</div>
+          <div class="act-where">Uluwatu</div>
+          <div class="act-desc">Ikonisk klippe-bar rett over Uluwatu-bølgen. Søndager er legendariske. Ser surfer rett under deg mens du drikker.</div>
+          <div class="act-price">Ingen inngang</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">✨</div>
+          <div class="act-title">Karma Beach</div>
+          <div class="act-where">Uluwatu</div>
+          <div class="act-desc">Klippeheis ned til privat strand. Eksklusiv vibes. Verdt det en gang — bestill bord på forhånd.</div>
+          <div class="act-price">Minimumsforbruk</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🌅</div>
+          <div class="act-title">West Sunset Point</div>
+          <div class="act-where">Gili Trawangan</div>
+          <div class="act-desc">Bønnesekker og barer langs vestkysten. Beste solnedgang på hele turen. Ankommer med litt tid å spare.</div>
+          <div class="act-price">Ingen inngang</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEDER & SPOTS -->
+  <div id="spots" class="page">
+    <div class="hero" style="padding:50px 60px 40px">
+      <div class="hero-eyebrow">Ikke gå glipp av disse</div>
+      <h1 style="font-size:60px">STEDER <span>& SPOTS</span></h1>
+    </div>
+    <div class="content">
+
+      <div class="spots-section">
+        <div class="spots-section-title">🌊 Strender</div>
+        <ul class="spots-list">
+          <div class="spot-item">
+            <div><div class="spot-name">Batu Bolong Beach</div><div class="spot-area">Canggu</div></div>
+            <div class="spot-desc">Beste surfe- og solnedgangsstrand i Canggu. Mange kaféer og utsikt rett til havet.</div>
+            <div class="spot-tip">Bra for alle nivåer</div>
+          </div>
+          <div class="spot-item">
+            <div><div class="spot-name">Echo Beach</div><div class="spot-area">Canggu</div></div>
+            <div class="spot-desc">Live musikk, bean bags og restauranter langs stranda. Sterkere bølger enn Batu Bolong.</div>
+            <div class="spot-tip">Kveldsliv</div>
+          </div>
+          <div class="spot-item">
+            <div><div class="spot-name">Seseh Beach</div><div class="spot-area">Canggu</div></div>
+            <div class="spot-desc">Sort sand, nesten ingen turister. Rolig og autentisk. Hunder, solnedgang og stillhet.</div>
+            <div class="spot-tip">Off the beaten path</div>
+          </div>
+          <div class="spot-item">
+            <div><div class="spot-name">Padang Padang Beach</div><div class="spot-area">Uluwatu</div></div>
+            <div class="spot-desc">Hvit sand, inngang via en hule i klippen. Populær filmstrand (Eat Pray Love).</div>
+            <div class="spot-tip">Naturlig klippe-basseng</div>
+          </div>
+          <div class="spot-item">
+            <div><div class="spot-name">Uluwatu Beach</div><div class="spot-area">Uluwatu</div></div>
+            <div class="spot-desc">Dramatiske klipper og turkist hav. World-class surfebølge, kafeer med utsikt fra klippen.</div>
+            <div class="spot-tip">Kun viderekommende surf</div>
+          </div>
+          <div class="spot-item">
+            <div><div class="spot-name">Gili Meno Beach</div><div class="spot-area">Gili Meno</div></div>
+            <div class="spot-desc">Den roligste øya. Nesten ingen folk. Turkist vann og hvit sand. Beste snorkling.</div>
+            <div class="spot-tip">Dagstur fra Gili T</div>
+          </div>
+        </ul>
+      </div>
+
+      <div class="spots-section">
+        <div class="spots-section-title">🛕 Templer</div>
+        <ul class="spots-list">
+          <div class="spot-item">
+            <div><div class="spot-name">Tanah Lot</div><div class="spot-area">Tabanan</div></div>
+            <div class="spot-desc">Ikonisk sjøtempel på en klippeøy. Best i solnedgang. 30 min fra Canggu.</div>
+            <div class="spot-tip">75k IDR inngang</div>
+          </div>
+          <div class="spot-item">
+            <div><div class="spot-name">Uluwatu Temple</div><div class="spot-area">Uluwatu</div></div>
+            <div class="spot-desc">Klippetempel 70m over havet. Kecak-dans kl. 18:00. Aggressive aper — hold ting unna.</div>
+            <div class="spot-tip">Book kecak tidlig</div>
+          </div>
+          <div class="spot-item">
+            <div><div class="spot-name">Tirta Empul</div><div class="spot-area">Ubud</div></div>
+            <div class="spot-desc">Hellig renselsestempel der man bader i naturkilder. Ta med sarong. Ektefølt opplevelse.</div>
+            <div class="spot-tip">50k IDR + sarong</div>
+          </div>
+        </ul>
+      </div>
+
+      <div class="spots-section">
+        <div class="spots-section-title">🔭 Utsiktspunkter & klipper</div>
+        <ul class="spots-list">
+          <div class="spot-item">
+            <div><div class="spot-name">Karang Boma Cliff</div><div class="spot-area">Uluwatu</div></div>
+            <div class="spot-desc">Dramatisk klippeutsikt, lite folksomt. Solnedgang og Kecak-dans om kvelden. Bare 10k IDR.</div>
+            <div class="spot-tip">10k IDR inngang</div>
+          </div>
+          <div class="spot-item">
+            <div><div class="spot-name">GWK Kulturpark</div><div class="spot-area">Uluwatu</div></div>
+            <div class="spot-desc">Gigantisk Garuda-statue + tradisjonelle danseshow. Imponerende størrelse, bra avslutning på turen.</div>
+            <div class="spot-tip">Åpner kl. 08:00</div>
+          </div>
+          <div class="spot-item">
+            <div><div class="spot-name">Tegallalang Rismark</div><div class="spot-area">Ubud</div></div>
+            <div class="spot-desc">Ikoniske grønne terrasser. Gå tidlig morgen for foto uten folkemengder.</div>
+            <div class="spot-tip">50k IDR</div>
+          </div>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAT & DRIKKE -->
+  <div id="mat" class="page">
+    <div class="hero" style="padding:50px 60px 40px">
+      <div class="hero-eyebrow">Kaféer, restauranter & beach clubs</div>
+      <h1 style="font-size:60px">MAT <span>& DRIKKE</span></h1>
+    </div>
+    <div class="content">
+
+      <div class="section-label">Kafeer — Canggu</div>
+      <div class="activity-grid">
+        <div class="act-card">
+          <div class="act-icon">☕</div>
+          <div class="act-title">Neighbourhood Coffee</div>
+          <div class="act-where">Canggu</div>
+          <div class="act-desc">Trendy og alltid fullt. God kaffe og frokost. Bra for å se folk og starte dagen.</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🥤</div>
+          <div class="act-title">Betelnut Café</div>
+          <div class="act-where">Canggu</div>
+          <div class="act-desc">Smoothiebowl-mekka og frokost. Frisk og sunn start på dagen etter de røffe kveldene.</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🥐</div>
+          <div class="act-title">Milk & Madu</div>
+          <div class="act-where">Canggu</div>
+          <div class="act-desc">Bakeri-frokost og god mat. Rolig atmosfære, perfekt for å planlegge dagen.</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🌿</div>
+          <div class="act-title">La Brisa</div>
+          <div class="act-where">Echo Beach, Canggu</div>
+          <div class="act-desc">Bambus-restaurant rett på stranda. Estetikk og vibe over alt — unik atmosfære.</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Lokal mat — billig og godt</div>
+      <div class="check-card">
+        <ul class="check-list">
+          <li><div class="dot-g"></div><span><strong>Nasi goreng / Mie goreng</strong> — stekt ris eller nudler, på enhver warung for 30–50k IDR. Spis dette daglig.</span></li>
+          <li><div class="dot-g"></div><span><strong>Babi guling</strong> (spesialgris) — balinesisk klassiker. Prøv Ibu Oka i Ubud (ca. 60–80k IDR).</span></li>
+          <li><div class="dot-g"></div><span><strong>Seafood Jimbaran Bay</strong> — fersk fisk ved havet om kvelden. Ca. 150–200k IDR for full middag.</span></li>
+          <li><div class="dot-g"></div><span><strong>Warung Mak Beng</strong> (Sanur) — legendarisk lokal fisk. Enkelt, billig og perfekt.</span></li>
+          <li><div class="dot-y"></div><span><strong>Satay / sate</strong> — grillspyd på gaten, alltid trygt og godt fra travle stands.</span></li>
+          <li><div class="dot-g"></div><span><strong>Es Kelapa</strong> — fersk kokosnøtt med is. Bestill dette overalt, koster 20k IDR.</span></li>
+        </ul>
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Avslapning & rolige steder</div>
+      <div class="activity-grid">
+        <div class="act-card">
+          <div class="act-icon">🌴</div>
+          <div class="act-title">Seseh Beach solnedgang</div>
+          <div class="act-where">Canggu</div>
+          <div class="act-desc">Sort sand, stille, ingen folkemengder. Sett dere ned med en kokos og se solen gå ned. Autentisk og gratis.</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">🏝️</div>
+          <div class="act-title">Gili Meno — ingenting</div>
+          <div class="act-where">Gili Meno</div>
+          <div class="act-desc">Dagstur der dere bare henger i hengekøye og snorkler. Ingen biler, ingen stress. Perfekt kontrast til Gili T.</div>
+        </div>
+        <div class="act-card">
+          <div class="act-icon">💆</div>
+          <div class="act-title">Bali-massasje</div>
+          <div class="act-where">Overalt</div>
+          <div class="act-desc">1-times full body massage for 100–150k IDR. Overalt i Canggu og Uluwatu. Gjør dette minst én gang!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSPORT -->
+  <div id="transport" class="page">
+    <div class="hero" style="padding:50px 60px 40px">
+      <div class="hero-eyebrow">Komme seg rundt</div>
+      <h1 style="font-size:60px">TRANS<span>PORT</span></h1>
+    </div>
+    <div class="content">
+
+      <div class="transport-card" style="border-color:rgba(232,98,42,0.4)">
+        <h3><span>🚤</span> Gili-båten — velg riktig</h3>
+        <ul class="check-list">
+          <li><div class="dot-g"></div><span><strong>Eka Jaya Fast Boat</strong> (anbefalt) — mest pålitelig. Padang Bai → Gili T, avgang ca. 08:30. Book på ekajayafastboat.com. ~450–550k IDR.</span></li>
+          <li><div class="dot-g"></div><span><strong>Gili Getaway</strong> — godt alternativ, litt raskere båt, noe dyrere.</span></li>
+          <li><div class="dot-r"></div><span><strong>Unngå</strong> tilfeldige "beste pris"-fyre på kaien — useriøse, kan kansellere sist minutt.</span></li>
+          <li><div class="dot-y"></div><span>Padang Bai er ~2 timer fra Canggu på scooter. Start kl. 06:30 for å rekke 09:00-avgangen.</span></li>
+          <li><div class="dot-y"></div><span>Ha <strong>sjøsyketabletter</strong> — overfarten kan bli røff. Ta dem 30 min før.</span></li>
+        </ul>
+      </div>
+
+      <div class="two-col mt-sm">
+        <div class="transport-card">
+          <h3><span>🛵</span> Scooter på Bali</h3>
+          <ul class="check-list">
+            <li><div class="dot-g"></div><span>Lei scooter for ~70–90k IDR/dag. Forhandle for ukeleis.</span></li>
+            <li><div class="dot-r"></div><span>Kjør alltid med hjelm — politiet bøtelegger, og det er farlig.</span></li>
+            <li><div class="dot-r"></div><span>Sjekk forsikringen dekker scooter. Mange gjør ikke det.</span></li>
+            <li><div class="dot-y"></div><span>Tanke bensin fra lokale flaskeselgere (Pertamax) eller bensinstasjon.</span></li>
+          </ul>
+        </div>
+        <div class="transport-card">
+          <h3><span>📱</span> Grab & Gojek</h3>
+          <ul class="check-list">
+            <li><div class="dot-g"></div><span>Last ned begge apper og legg til kortet FØR avreise.</span></li>
+            <li><div class="dot-g"></div><span>Sammenlign alltid pris mellom Grab og Gojek.</span></li>
+            <li><div class="dot-y"></div><span>Unngå bluebird-taxi fra flyplassen — Grab er mye billigere.</span></li>
+            <li><div class="dot-g"></div><span>Bra for lengre turer og når dere er slitne.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="transport-card mt-sm">
+        <h3><span>🚲</span> På Gili-øyene</h3>
+        <ul class="check-list">
+          <li><div class="dot-g"></div><span><strong>Ingen biler på øyene.</strong> Alt foregår på sykkel eller cidomo (hestevogn).</span></li>
+          <li><div class="dot-g"></div><span>Lei sykkel for 30–50k IDR/dag — tilgjengelig overalt.</span></li>
+          <li><div class="dot-g"></div><span>Runde rundt hele Gili T tar ca. 1 time på sykkel.</span></li>
+          <li><div class="dot-y"></div><span>Cidomo (hestevogn) for bagasje eller moro — forhandle pris på forhånd.</span></li>
+        </ul>
+      </div>
+
+      <div class="check-card mt" style="background:rgba(26,122,110,0.08); border-color:rgba(37,168,150,0.3)">
+        <div class="check-card-title" style="color:var(--teal2)">🏥 Viktige numre</div>
+        <ul class="check-list">
+          <li><div class="dot-g"></div><span><strong>BIMC Hospital Kuta</strong>: +62 361 761263 — beste sykehus for turister</span></li>
+          <li><div class="dot-g"></div><span><strong>Ambulanse Indonesia</strong>: 118</span></li>
+          <li><div class="dot-g"></div><span><strong>Norsk ambassade Jakarta</strong>: +62 21 2280 0700</span></li>
+          <li><div class="dot-y"></div><span>Lagre disse i kontaktlisten nå!</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- HELSE -->
+  <div id="helse" class="page">
+    <div class="hero" style="padding:50px 60px 40px">
+      <div class="hero-eyebrow">Bali Belly & andre ting</div>
+      <h1 style="font-size:60px">HELSE <span>& TIPS</span></h1>
+    </div>
+    <div class="content">
+
+      <div class="warning-box">
+        <strong>Hva er Bali Belly?</strong> Matforgiftning / mage-tarm-infeksjon fra forurenset mat eller vann. Opptil 50% av reisende opplever det. Symptomer: diaré, kvalme, mageknip, feber. Starter 12–48 timer etter eksponering. <strong>Kan unngås</strong> med enkle tiltak.
+      </div>
+
+      <div class="two-col">
+        <div class="check-card">
+          <div class="check-card-title"><span class="ico">🛡️</span> Forebygg Bali Belly</div>
+          <ul class="check-list">
+            <li><div class="dot-r"></div><span>Drikk <strong>ALDRI springvann</strong> — kun flasker eller filtrert</span></li>
+            <li><div class="dot-r"></div><span>Unngå <strong>is i billige steder</strong> — kan være springvann</span></li>
+            <li><div class="dot-y"></div><span>Forsiktig med rå salat og skrelt frukt fra gatestalls</span></li>
+            <li><div class="dot-g"></div><span>Vask alltid hender — ha håndsprit tilgjengelig</span></li>
+            <li><div class="dot-g"></div><span>Spis fra <strong>travle warung-er</strong> — høy gjennomstrøm = ferskere mat</span></li>
+            <li><div class="dot-g"></div><span>Probiotika-kapsler daglig fra 3 dager FØR avreise</span></li>
+          </ul>
+        </div>
+        <div class="check-card">
+          <div class="check-card-title"><span class="ico">💊</span> Behandling</div>
+          <ul class="check-list">
+            <li><div class="dot-r"></div><span><strong>Ciprofloxacin 500mg</strong> — ta 2x daglig i 3 dager. Resept fra lege hjemme.</span></li>
+            <li><div class="dot-r"></div><span><strong>Imodium</strong> — stopper diare raskt. Bruk ved behov.</span></li>
+            <li><div class="dot-g"></div><span><strong>Dioralyte</strong> — drikk så mye som mulig. Viktigst av alt.</span></li>
+            <li><div class="dot-y"></div><span><strong>Buscopan</strong> — mot krampaktig mageknip</span></li>
+            <li><div class="dot-g"></div><span>Hvil og drikk vann. Unngå alkohol og sterk mat.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Andre helsetips</div>
+      <div class="check-card">
+        <ul class="check-list">
+          <li><div class="dot-r"></div><span><strong>Solen er intens</strong> — SPF 50 daglig, selv på overskya dager. Bruk hodeplagg på scooter.</span></li>
+          <li><div class="dot-r"></div><span><strong>Dengue-mygg</strong> biter på dagtid, ikke natt. Bruk DEET 30%+ i jungel og rismark.</span></li>
+          <li><div class="dot-r"></div><span><strong>Apebitt ved Uluwatu</strong> — oppsøk lege umiddelbart. Kontakt reiseforsikringen (rabiesinjeksjoner kan trengs).</span></li>
+          <li><div class="dot-y"></div><span><strong>Sjøsyke</strong> på Gili-båten — ta tabletter 30 min før avgang, sitt midtskips.</span></li>
+          <li><div class="dot-y"></div><span><strong>Scooter-velt</strong> — vanligste skade blant turister. Kjør forsiktig, særlig på våt asfalt og i trafikk.</span></li>
+          <li><div class="dot-g"></div><span><strong>Hydrasjon</strong> — drikk minst 3L vann/dag i varmen. Mer om dere drikker alkohol.</span></li>
+          <li><div class="dot-g"></div><span><strong>BIMC Hospital Kuta/Seminyak</strong> — beste turistsykehus på Bali. Ring: +62 361 761263</span></li>
+        </ul>
+      </div>
+
+      <div class="check-card mt" style="border-color:rgba(232,98,42,0.3); background:rgba(232,98,42,0.05)">
+        <div class="check-card-title" style="color:var(--orange2)"><span class="ico">⚠️</span> Ape-tips ved Uluwatu</div>
+        <ul class="check-list">
+          <li><div class="dot-r"></div><span>Ha IKKE solbriller på hodet, caps tilbake eller synlige snacks</span></li>
+          <li><div class="dot-r"></div><span>Hold veske tett inntil kroppen — de åpner glidelås</span></li>
+          <li><div class="dot-y"></div><span>Guidene der hjelper deg å få ting tilbake mot mat — ikke gi mat direkte til apene</span></li>
+          <li><div class="dot-g"></div><span>Hold styr på telefonen og kameraet — ikke ha dem synlig i hånden</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
